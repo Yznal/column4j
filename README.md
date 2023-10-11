@@ -11,8 +11,9 @@ In memory column data store for Java.
     * https://clickhouse.com/docs/en/optimize/skipping-indexes
 
 Используем:
-* [OpenJDK 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html) и [Early Access Build с Panama](https://jdk.java.net/jextract/)
-* [Vector API](https://openjdk.org/jeps/417)
+* [OpenJDK 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html) и [Early Access Build с Panama](https://jdk.java.net/jextract/).
+* [Vector API](https://openjdk.org/jeps/417).
+* [JMH](https://github.com/openjdk/jmh) для сравнения имплементаций.
 
 
 Два сценария использования:
