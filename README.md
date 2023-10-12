@@ -9,6 +9,7 @@ In memory column data store for Java.
     * https://ignite.apache.org/
     * https://hazelcast.com/
     * https://clickhouse.com/docs/en/optimize/skipping-indexes
+    * https://clickhouse.com/docs/en/development/architecture
 
 Используем:
 * [OpenJDK 21](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html) и [Early Access Build с Panama](https://jdk.java.net/jextract/).
