@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'net.yandexcloud'
+version '0.0.1'
+
+targetCompatibility = JavaVersion.VERSION_21
+sourceCompatibility = JavaVersion.VERSION_21
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lib_lombok_version
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lib_lombok_version
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: lib_junit5_version
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: lib_junit5_version
+}
+
+test {
+    useJUnitPlatform()
+}
