@@ -7,6 +7,7 @@ import ru.itmo.column4j.query.table.TableQueryBuilder;
 import com.github.sibmaks.column4j.sample.query.table.TableQueryBuilderImpl;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author sibmaks
@@ -120,5 +121,26 @@ public class SampleTable<K> implements Table<K> {
 
     public Map<K, Object> getColumn(String column) {
         return values.get(column);
+    }
+
+    public Set<K> getFilteredPrimaryKeys(List<Map.Entry<String, Predicate<Optional<Object>>>> conditions) {
+        var allPrimaryKeys = getPrimaryKeys();
+        var filteredPrimaryKeys = new HashSet<K>();
+        for (K primaryKey : allPrimaryKeys) {
+            boolean valid = true;
+            for (var condition : conditions) {
+                var column = condition.getKey();
+                var optionalValue = get(primaryKey, column);
+                var predicate = condition.getValue();
+                if(!predicate.test(optionalValue)) {
+                    valid = false;
+                    break;
+                }
+            }
+            if(valid) {
+                filteredPrimaryKeys.add(primaryKey);
+            }
+        }
+        return filteredPrimaryKeys;
     }
 }

@@ -26,23 +26,7 @@ class SelectQueryImpl<K> implements SelectQuery {
             var primaryKeysIterable = primaryKeys.iterator();
             return new SelectionResultImpl<>(table, columns, primaryKeysIterable, orderedResultColumns);
         }
-        var primaryKeys = table.getPrimaryKeys();
-        var filteredPrimaryKeys = new HashSet<K>();
-        for (K primaryKey : primaryKeys) {
-            boolean valid = true;
-            for (var condition : conditions) {
-                var column = condition.getKey();
-                var optionalValue = table.get(primaryKey, column);
-                var predicate = condition.getValue();
-                if(!predicate.test(optionalValue)) {
-                    valid = false;
-                    break;
-                }
-            }
-            if(valid) {
-                filteredPrimaryKeys.add(primaryKey);
-            }
-        }
+        var filteredPrimaryKeys = table.getFilteredPrimaryKeys(conditions);
         return new SelectionResultImpl<>(table, columns, filteredPrimaryKeys.iterator(), orderedResultColumns);
     }
 }

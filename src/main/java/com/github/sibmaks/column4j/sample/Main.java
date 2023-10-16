@@ -103,6 +103,25 @@ public class Main {
         System.out.println("Aggregation result");
         printQueryResult(aggregations);
 
+        var aggregationsFiltered = dataQueryBuilder.select()
+                .count("cpu_usage", "cnt_cpu_usage")
+                .max("cpu_usage", "max_cpu_usage")
+                .min("cpu_usage", "min_cpu_usage")
+                .average("cpu_usage", "avg_cpu_usage")
+                .sum("cpu_usage", "sum_cpu_usage")
+
+                .average("ram_usage", "avg_ram_usage")
+
+                .where()
+
+                .eq("dc", "beta")
+
+                .build()
+                .execute();
+
+        System.out.println("Aggregation filtered result");
+        printQueryResult(aggregationsFiltered);
+
         var grouping = dataQueryBuilder
                 .groupBy("dc")
                 .column("dc", "data-center")

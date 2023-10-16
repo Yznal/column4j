@@ -7,13 +7,14 @@ import com.github.sibmaks.column4j.sample.query.table.select.aggregation.aggrega
 import com.github.sibmaks.column4j.sample.query.table.select.aggregation.aggregator.impl.MinAggregator;
 import com.github.sibmaks.column4j.sample.query.table.select.aggregation.aggregator.impl.average.AverageAggregator;
 import com.github.sibmaks.column4j.sample.query.table.select.aggregation.aggregator.impl.sum.SumAggregators;
+import com.github.sibmaks.column4j.sample.query.table.select.criteria.CriteriaQueryBuilderImpl;
 import ru.itmo.column4j.query.table.select.SelectQuery;
 import ru.itmo.column4j.query.table.select.aggregation.AggregationQueryBuilder;
 import ru.itmo.column4j.query.table.select.criteria.CriteriaQueryBuilder;
 import ru.itmo.column4j.query.table.select.criteria.CriteriaQueryBuilderStep;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author sibmaks
@@ -22,20 +23,25 @@ import java.util.Map;
 public class AggregationQueryBuilderImpl<K> implements AggregationQueryBuilder {
     protected final SampleTable<K> table;
     private final Map<String, Map.Entry<String, Aggregator<?>>> columns;
+    private final List<Map.Entry<String, Predicate<Optional<Object>>>> conditions;
 
     public AggregationQueryBuilderImpl(SampleTable<K> table) {
         this.table = table;
         this.columns = new LinkedHashMap<>();
+        this.conditions = new ArrayList<>();
     }
 
     @Override
     public CriteriaQueryBuilderStep<CriteriaQueryBuilder<SelectQuery>> where() {
-        return null;
+        return new CriteriaQueryBuilderImpl<>(table, conditions -> {
+            this.conditions.addAll(conditions);
+            return build();
+        });
     }
 
     @Override
     public SelectQuery build() {
-        return new AggregationQueryImpl<>(table, Map.copyOf(columns), columns.keySet());
+        return new AggregationQueryImpl<>(table, Map.copyOf(columns), columns.keySet(), conditions);
     }
 
     @Override

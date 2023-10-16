@@ -6,9 +6,8 @@ import com.github.sibmaks.column4j.sample.query.table.select.aggregation.aggrega
 import ru.itmo.column4j.query.table.select.SelectQuery;
 import ru.itmo.column4j.query.table.select.SelectionResult;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -17,15 +16,15 @@ import java.util.stream.Collectors;
  */
 class AggregationQueryImpl<K> implements SelectQuery {
     private final SampleTable<K> table;
-    private final Map<String, Map.Entry<String, Aggregator<?>>> columns;
     private final Set<String> orderedResultColumns;
     private final Map<String, Set<Map.Entry<String, Aggregator>>> sourceToResultsColumns;
+    private final List<Map.Entry<String, Predicate<Optional<Object>>>> conditions;
 
     public AggregationQueryImpl(SampleTable<K> table,
                                 Map<String, Map.Entry<String, Aggregator<?>>> columns,
-                                Set<String> orderedResultColumns) {
+                                Set<String> orderedResultColumns,
+                                List<Map.Entry<String, Predicate<Optional<Object>>>> conditions) {
         this.table = table;
-        this.columns = columns;
         this.orderedResultColumns = orderedResultColumns;
         this.sourceToResultsColumns = columns.entrySet()
                 .stream()
@@ -38,11 +37,26 @@ class AggregationQueryImpl<K> implements SelectQuery {
                                 )
                         )
                 );
+        this.conditions = conditions;
     }
 
     @Override
     public SelectionResult execute() {
 
+        Set<K> filteredPrimaryKeys;
+
+        if (conditions.isEmpty()) {
+            filteredPrimaryKeys = table.getPrimaryKeys();
+        } else {
+            filteredPrimaryKeys = table.getFilteredPrimaryKeys(conditions);
+        }
+
+        var resultRow = getResultRows(filteredPrimaryKeys);
+
+        return new AggregationResultImpl(orderedResultColumns, resultRow);
+    }
+
+    private Map<String, Object> getResultRows(Set<K> filteredPrimaryKeys) {
         var resultRow = new HashMap<String, Object>();
 
         for (var sourceEntry : sourceToResultsColumns.entrySet()) {
@@ -56,7 +70,12 @@ class AggregationQueryImpl<K> implements SelectQuery {
             }
 
             var sourceColumnName = sourceEntry.getKey();
-            for (var value : table.getColumn(sourceColumnName).values()) {
+            var columnValues = table.getColumn(sourceColumnName);
+            for (var valueEntry : columnValues.entrySet()) {
+                if (!filteredPrimaryKeys.contains(valueEntry.getKey())) {
+                    continue;
+                }
+                var value = valueEntry.getValue();
                 for (var aggregationEntry : sourceEntry.getValue()) {
                     var alias = aggregationEntry.getKey();
                     var aggregator = aggregationEntry.getValue();
@@ -73,7 +92,6 @@ class AggregationQueryImpl<K> implements SelectQuery {
                 resultRow.put(alias, result);
             }
         }
-
-        return new AggregationResultImpl(orderedResultColumns, resultRow);
+        return resultRow;
     }
 }
