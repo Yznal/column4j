@@ -2,8 +2,8 @@ package com.github.sibmaks.column4j.sample.query.table.select.selection;
 
 import com.github.sibmaks.column4j.sample.SampleTable;
 import lombok.AllArgsConstructor;
-import ru.itmo.column4j.query.table.select.SelectionResultRow;
 import ru.itmo.column4j.query.table.select.SelectionResult;
+import ru.itmo.column4j.query.table.select.SelectionResultRow;
 
 import java.util.Iterator;
 import java.util.Map;

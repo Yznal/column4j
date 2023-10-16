@@ -75,6 +75,20 @@ public class Main {
         System.out.println("Selection result");
         printQueryResult(selection);
 
+        var selectionFiltered = dataQueryBuilder.select()
+                .column("timestamp")
+                .column("dc")
+                .column("cpu_usage")
+                .column("ram_usage")
+                .where()
+                .eq("dc", "alpha")
+                .exists("cpu_usage")
+                .build()
+                .execute();
+
+        System.out.println("Selection filtered result");
+        printQueryResult(selectionFiltered);
+
         var aggregations = dataQueryBuilder.select()
                 .count("cpu_usage", "cnt_cpu_usage")
                 .max("cpu_usage", "max_cpu_usage")
