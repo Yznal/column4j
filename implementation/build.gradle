@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'com.yandex.column4j'
+version '0.0.1'
+
+
+targetCompatibility = JavaVersion.VERSION_21
+sourceCompatibility = JavaVersion.VERSION_21
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$lib_junit_version"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$lib_junit_version"
+}
+
+test {
+    useJUnitPlatform()
+}
