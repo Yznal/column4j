@@ -5,6 +5,7 @@ In memory column data store for Java.
 Ссылки:
 * [Базовые концепции мониторинга](https://docs.victoriametrics.com/keyConcepts.html)
 * [Немного про Yandex Monitoring](https://www.youtube.com/watch?v=Qnw7s8290Cs&t=2s)
+* [Лекции по таймсериям, обзор БД](https://db.cs.cmu.edu/seminar2017/)
 * На какие реализации можно ссылаться посмотреть:
     * https://arrow.apache.org/
     * https://ignite.apache.org/
