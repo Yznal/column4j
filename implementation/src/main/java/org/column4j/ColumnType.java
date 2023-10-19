@@ -1,7 +1,7 @@
-package org.column4j.base;
+package org.column4j;
 
 /**
- * Тип данных колонки
+ * Column data type
  *
  * @author sibmaks
  * @since 0.0.1
