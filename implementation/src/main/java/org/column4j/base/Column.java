@@ -1,4 +1,4 @@
-package com.yandex.column4j.base;
+package org.column4j.base;
 
 /**
  * Интерфейс для получения данных по колонке

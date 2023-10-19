@@ -1,4 +1,4 @@
-package com.yandex.column4j.typed;
+package org.column4j.typed;
 
 /**
  * @author sibmaks

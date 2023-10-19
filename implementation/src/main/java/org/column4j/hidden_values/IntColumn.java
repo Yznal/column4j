@@ -1,18 +1,18 @@
-package com.yandex.column4j.hidden_values;
+package org.column4j.hidden_values;
 
-import com.yandex.column4j.base.Column;
+import org.column4j.base.Column;
 
 /**
  * @author sibmaks
  * @since 0.0.1
  */
-public interface DoubleColumn extends Column<double[]> {
+public interface IntColumn extends Column<int[]> {
     /**
      * Получить значение из позиции {@code pos}
      *
      * @param pos позиция в колонке
      */
-    double get(int pos);
+    int get(int pos);
 
     /**
      * Метод для проверки наличия значение по указанной позиции {@code pos}

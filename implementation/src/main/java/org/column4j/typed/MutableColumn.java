@@ -1,6 +1,6 @@
-package com.yandex.column4j.typed;
+package org.column4j.typed;
 
-import com.yandex.column4j.base.Column;
+import org.column4j.base.Column;
 
 /**
  * @author sibmaks

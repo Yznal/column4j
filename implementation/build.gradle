@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.yandex.column4j'
+group 'org.column4j'
 version '0.0.1'
 
 

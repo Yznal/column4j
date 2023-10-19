@@ -1,4 +1,4 @@
-package com.yandex.column4j.base;
+package org.column4j.base;
 
 /**
  * Тип данных колонки
@@ -6,7 +6,7 @@ package com.yandex.column4j.base;
  * @author sibmaks
  * @since 0.0.1
  */
-enum ColumnType {
+public enum ColumnType {
     FLOAT64,
     FLOAT32,
     INT64,

@@ -1,8 +1,8 @@
-package com.yandex.column4j;
+package org.column4j;
 
-import com.yandex.column4j.base.ColumnType;
-import com.yandex.column4j.base.ColumnVector;
-import com.yandex.column4j.base.MutableColumn;
+import org.column4j.base.ColumnType;
+import org.column4j.base.ColumnVector;
+import org.column4j.base.MutableColumn;
 
 /**
  * @author sibmaks

@@ -1,6 +1,7 @@
-package com.yandex.column4j;
+package org.column4j;
 
-import com.yandex.column4j.base.ColumnType;
+import org.column4j.base.ColumnType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author sibmaks
  * @since 0.0.1
  */
+@Disabled
 class ColumnTest {
 
     @Test

@@ -1,6 +1,6 @@
-package com.yandex.column4j.hidden_values;
+package org.column4j.hidden_values;
 
-import com.yandex.column4j.base.Column;
+import org.column4j.base.Column;
 
 /**
  * @author sibmaks
