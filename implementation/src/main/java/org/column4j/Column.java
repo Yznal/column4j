@@ -16,7 +16,7 @@ public interface Column<T> {
     int firstRowIndex();
 
     /**
-     * @return amount of unique values in column
+     * @return size of column space including reserved
      */
     int capacity();
 
