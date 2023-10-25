@@ -73,3 +73,16 @@ SumIntArrays.benchmarkSumViaVector           16  thrpt    5  304075034.342 ± 29
 SumIntArrays.benchmarkSumViaVector          128  thrpt    5  135596378.139 ±   934321.705  ops/s
 SumIntArrays.benchmarkSumViaVector         1024  thrpt    5   19681629.643 ±    71251.811  ops/s
 ```
+
+With increased amount of iterations:
+```text
+Benchmark                           (arraySize)   Mode  Cnt          Score         Error  Units
+SumIntArrays.benchmarkSumViaFor              16  thrpt   64  152109847.972 ±  239717.177  ops/s
+SumIntArrays.benchmarkSumViaFor             128  thrpt   64   27133547.636 ±    8432.987  ops/s
+SumIntArrays.benchmarkSumViaFor            1024  thrpt   64    2587609.170 ±     666.955  ops/s
+SumIntArrays.benchmarkSumViaFor         1048576  thrpt   64       2467.020 ±       1.490  ops/s
+SumIntArrays.benchmarkSumViaVector           16  thrpt   64  305716711.796 ± 3303620.254  ops/s
+SumIntArrays.benchmarkSumViaVector          128  thrpt   64  136250533.271 ±  101914.663  ops/s
+SumIntArrays.benchmarkSumViaVector         1024  thrpt   64   19755445.723 ±   10787.460  ops/s
+SumIntArrays.benchmarkSumViaVector      1048576  thrpt   64      28486.297 ±    2195.104  ops/s
+```
