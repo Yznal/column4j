@@ -45,6 +45,11 @@ tasks.compileJava {
     options.compilerArgs.addAll(previewJvmArgs)
 }
 
+// idk it just fixed idea
+tasks.test {
+    jvmArgs = previewJvmArgs
+}
+
 tasks.compileJmhJava {
     options.compilerArgs.addAll(previewJvmArgs)
 }
