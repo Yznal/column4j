@@ -19,13 +19,14 @@ public class Compress {
 
     public int[] arr;
 
-    public IntCompressor compressor = new IntCompressor(2);
+    public IntCompressor compressor;
 
 
     @Setup(Level.Iteration)
     public void setUp() {
         arr = new int[arraySize];
         Arrays.fill(arr, (1 << byteSize * 8) - 35);
+        compressor = new IntCompressor(byteSize);
     }
 
     /**
