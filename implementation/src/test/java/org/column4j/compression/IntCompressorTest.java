@@ -32,6 +32,9 @@ class IntCompressorTest {
         // check vector correctness
         byte[] simdCompressed = compressor.compressIntsV(original);
         assertArrayEquals(compressed, simdCompressed);
+        // check vector2 correctness
+        byte[] simdCompressed2 = compressor.compressIntsV2(original);
+        assertArrayEquals(compressed, simdCompressed2);
     }
 
 }

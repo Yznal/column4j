@@ -1,5 +1,6 @@
 package org.column4j;
 
+import jdk.incubator.vector.ByteVector;
 import jdk.incubator.vector.IntVector;
 import org.column4j.compression.IntCompressor;
 import org.openjdk.jmh.annotations.*;
@@ -13,6 +14,9 @@ public class Compress {
     @Param({"10", "16", "100", "128", "1000", "1024", "1000000", "1048576"})
     public int arraySize;
 
+    @Param({"1", "2", "3"})
+    public int byteSize;
+
     public int[] arr;
 
     public IntCompressor compressor = new IntCompressor(2);
@@ -21,7 +25,7 @@ public class Compress {
     @Setup(Level.Iteration)
     public void setUp() {
         arr = new int[arraySize];
-        Arrays.fill(arr, 31231);
+        Arrays.fill(arr, (1 << byteSize * 8) - 35);
     }
 
     /**
@@ -36,14 +40,27 @@ public class Compress {
     }
 
     /**
-     * Sum values in array with using {@link IntVector} API
+     * Extracts integer bytes with {@link IntVector} to {@link ByteVector}
+     * compression conversion
      *
      * @return compressed bytes
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public byte[] benchmarkCompressVector() {
+    public byte[] benchmarkCompressVector_maskCompression() {
         return compressor.compressIntsV(arr);
+    }
+
+    /**
+     * Extracts integer bytes with {@link IntVector} to {@link ByteVector}
+     * direct conversion
+     *
+     * @return compressed bytes
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    public byte[] benchmarkCompressVector_directMapping() {
+        return compressor.compressIntsV2(arr);
     }
 
 }

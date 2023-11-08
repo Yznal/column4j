@@ -13,6 +13,12 @@ public class IntCompressor {
             0x7777777777777777L,    // 11101110111...
             0xFFFFFFFFFFFFFFFFL     // 11111111111... noop
     };
+    private static final int[][] INTS_OUT_MAPS = {
+            new int[] {0, -1, -1, -1, 1, -1, -1, -1, 2, -1 , -1, -1, 3, -1, -1, -1},
+            new int[] {0, 1, -1, -1, 2, 3, -1, -1, 4, 5, -1, -1, 6, 7, -1, -1},
+            new int[] {0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11, -1},
+            new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
+    };
 
     private static final long[] LONG_COMPRESS_MASKS = {
             0x1010101010101010L,    // 10000000100...
@@ -61,6 +67,27 @@ public class IntCompressor {
         ) {
             ByteVector v = IntVector.fromArray(iSpecies, original, offset).reinterpretAsBytes();
             v.compress(cmpIntMask).intoArray(compressed, bytesOffset, outIntMask);
+        }
+        for (; offset < original.length; offset++) { // remainder
+            for (int b = 0; b < byteSize; b++) {
+                compressed[offset * byteSize + b] = (byte) (original[offset] >> b * Byte.SIZE);
+            }
+        }
+        return compressed;
+    }
+
+    public byte[] compressIntsV2(int[] original) {
+        validateIntParams();
+
+        byte[] compressed = new byte[byteSize * original.length];
+        int offset = 0;
+        int bytesOffset = 0;
+        for ( ;
+              offset < iSpecies.loopBound(original.length);
+              offset += iSpecies.length(), bytesOffset += byteSize * iSpecies.length()
+        ) {
+            ByteVector v = IntVector.fromArray(iSpecies, original, offset).reinterpretAsBytes();
+            v.intoArray(compressed, bytesOffset, INTS_OUT_MAPS[byteSize-1], 0,  cmpIntMask);
         }
         for (; offset < original.length; offset++) { // remainder
             for (int b = 0; b < byteSize; b++) {
