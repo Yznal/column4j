@@ -9,9 +9,9 @@ import java.util.Arrays;
 
 @Fork(1)
 @State(Scope.Thread)
-public class Compress {
+public class CompressBenchmark {
 
-    @Param({"10", "16", "100", "128", "1000", "1024", "1000000", "1048576"})
+    @Param({"10", "16", "1000", "1024", "1000000", "1048576"})
     public int arraySize;
 
     @Param({"1", "2", "3"})

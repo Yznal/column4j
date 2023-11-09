@@ -7,18 +7,25 @@ import jdk.incubator.vector.VectorSpecies;
 
 public class IntCompressor {
 
+    static VectorSpecies<Byte> bSpecies = ByteVector.SPECIES_PREFERRED;
+    static VectorSpecies<Integer> iSpecies = IntVector.SPECIES_PREFERRED;
+
     private static final long[] INT_COMPRESS_MASKS = {
             0x1111111111111111L,    // 10001000100...
             0x3333333333333333L,    // 11001100110...
             0x7777777777777777L,    // 11101110111...
             0xFFFFFFFFFFFFFFFFL     // 11111111111... noop
     };
-    private static final int[][] INTS_OUT_MAPS = {
-            new int[] {0, -1, -1, -1, 1, -1, -1, -1, 2, -1 , -1, -1, 3, -1, -1, -1},
-            new int[] {0, 1, -1, -1, 2, 3, -1, -1, 4, 5, -1, -1, 6, 7, -1, -1},
-            new int[] {0, 1, 2, -1, 3, 4, 5, -1, 6, 7, 8, -1, 9, 10, 11, -1},
-            new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-    };
+
+    private static int[] generateIntOutMap(int byteSize) {
+        int mapSize = iSpecies.vectorByteSize();
+        int[] map = new int[mapSize];
+        int outIdx = 0;
+        for (int i = 0; i < mapSize; i++) {
+            map[i] = i % Integer.BYTES < byteSize ? outIdx++ : -1;
+        }
+        return map;
+    }
 
     private static final long[] LONG_COMPRESS_MASKS = {
             0x1010101010101010L,    // 10000000100...
@@ -30,9 +37,7 @@ public class IntCompressor {
     private final int byteSize;
     private final VectorMask<Byte> cmpIntMask;
     private final VectorMask<Byte> outIntMask;
-
-    VectorSpecies<Byte> bSpecies = ByteVector.SPECIES_PREFERRED;
-    VectorSpecies<Integer> iSpecies = IntVector.SPECIES_PREFERRED;
+    private final int[] intToByteMap;
 
     public IntCompressor(int byteSize) {
         if (byteSize < 1) {
@@ -41,6 +46,7 @@ public class IntCompressor {
         this.byteSize = byteSize;
         this.cmpIntMask = VectorMask.fromLong(bSpecies, INT_COMPRESS_MASKS[byteSize - 1]);
         this.outIntMask = VectorMask.fromLong(bSpecies, (1L << byteSize * iSpecies.length()) - 1);
+        this.intToByteMap = generateIntOutMap(byteSize);
     }
 
     public byte[] compressInts(int[] original) {
@@ -87,7 +93,7 @@ public class IntCompressor {
               offset += iSpecies.length(), bytesOffset += byteSize * iSpecies.length()
         ) {
             ByteVector v = IntVector.fromArray(iSpecies, original, offset).reinterpretAsBytes();
-            v.intoArray(compressed, bytesOffset, INTS_OUT_MAPS[byteSize-1], 0,  cmpIntMask);
+            v.intoArray(compressed, bytesOffset, intToByteMap, 0,  cmpIntMask);
         }
         for (; offset < original.length; offset++) { // remainder
             for (int b = 0; b < byteSize; b++) {
