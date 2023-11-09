@@ -19,6 +19,8 @@ public class CompressBenchmark {
 
     public int[] arr;
 
+    public byte[] bytes;
+
     public IntCompressor compressor;
 
 
@@ -27,6 +29,7 @@ public class CompressBenchmark {
         arr = new int[arraySize];
         Arrays.fill(arr, (1 << byteSize * 8) - 35);
         compressor = new IntCompressor(byteSize);
+        bytes = compressor.compressInts(arr);
     }
 
     /**
@@ -53,16 +56,29 @@ public class CompressBenchmark {
     }
 
     /**
-     * Extracts integer bytes with {@link IntVector} to {@link ByteVector}
-     * direct conversion
+     * Turns compressed integer bytes into integer array
+     * using sequential for loop
      *
-     * @return compressed bytes
+     * @return decompressed ints
      */
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public byte[] benchmarkCompressVector_directMapping() {
-        return compressor.compressIntsV2(arr);
+    public int[] benchmarkDecompressSequential() {
+        return compressor.decompressInts(bytes);
     }
+
+    /**
+     * Turns compressed integer bytes into integer array
+     * using vectorized simd loop
+     *
+     * @return decompressed ints
+     */
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    public int[] benchmarkDecompressVector() {
+        return compressor.decompressIntsV(bytes);
+    }
+
 
 }
 
