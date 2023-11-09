@@ -111,9 +111,7 @@ public class IntMutableColumnImpl implements IntMutableColumn {
             data = grow(position + 1);
         }
         data[position] = value;
-        if(position <= size) {
-            size++;
-        } else {
+        if(position >= size) {
             size = position + 1;
         }
         if(tombstone == value) {
