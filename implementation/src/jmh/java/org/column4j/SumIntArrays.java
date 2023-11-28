@@ -57,7 +57,7 @@ public class SumIntArrays {
         IntVector aVector = IntVector.fromArray(speciesPreferred, array, 0);
         for(int offset = speciesLength; offset < arraySize; offset += speciesLength) {
             IntVector bVector = IntVector.fromArray(speciesPreferred, array, offset);
-            aVector.add(bVector);
+            aVector = aVector.add(bVector);
         }
         return aVector.reduceLanes(VectorOperators.ADD);
     }
