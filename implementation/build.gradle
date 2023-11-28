@@ -24,8 +24,9 @@ sourceSets {
     }
 }
 
-task jmh(type: JavaExec, dependsOn: jmhClasses) {
-    main = 'org.openjdk.jmh.Main'
+tasks.register('jmh', JavaExec) {
+    dependsOn jmhClasses
+    mainClass = 'org.openjdk.jmh.Main'
     jvmArgs = previewJvmArgs
     classpath = sourceSets.jmh.compileClasspath + sourceSets.jmh.runtimeClasspath
 }
@@ -34,11 +35,14 @@ dependencies {
     jmhImplementation group: 'org.openjdk.jmh', name: 'jmh-core', version: lib_jmh_version
     jmhAnnotationProcessor group: 'org.openjdk.jmh', name: 'jmh-generator-annprocess', version: lib_jmh_version
 
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: lib_mockito_version
+
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: lib_junit_version
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: lib_junit_version
 }
 
 test {
+    jvmArgs = previewJvmArgs
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
@@ -48,6 +52,10 @@ jacocoTestReport {
 }
 
 tasks.compileJava {
+    options.compilerArgs.addAll(previewJvmArgs)
+}
+
+tasks.compileTestJava {
     options.compilerArgs.addAll(previewJvmArgs)
 }
 
