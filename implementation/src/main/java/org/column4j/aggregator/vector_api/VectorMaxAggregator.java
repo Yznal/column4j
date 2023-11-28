@@ -3,8 +3,8 @@ package org.column4j.aggregator.vector_api;
 import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
-import org.column4j.ColumnVector;
 import org.column4j.aggregator.IntAggregator;
+import org.column4j.mutable.primitive.IntMutableColumn;
 
 /**
  * @author sibmaks
@@ -21,18 +21,21 @@ public class VectorMaxAggregator implements IntAggregator {
     }
 
     @Override
-    public int aggregate(ColumnVector<int[]> column, int from, int to) {
+    public int aggregate(IntMutableColumn column, int from, int to) {
         var data = column.getData();
+        var tombstone = column.getTombstone();
         from = Math.max(from, column.firstRowIndex());
         var intVector = IntVector.broadcast(speciesPreferred, Integer.MIN_VALUE);
         for(; from < to && from + speciesLength <= to; from += speciesLength) {
             var nextIntVector = IntVector.fromArray(speciesPreferred, data, from);
-            intVector = intVector.max(nextIntVector);
+            var tombstoneMask = nextIntVector.eq(tombstone).not();
+            intVector = intVector.lanewise(VectorOperators.MAX, nextIntVector, tombstoneMask);
         }
         var max = intVector.reduceLanes(VectorOperators.MAX);
         // tail
         for(; from < to; from++) {
-            max = Math.max(max, data[from]);
+            var value = data[from];
+            max = value == tombstone ? max : Math.max(max, value);
         }
         return max;
     }

@@ -1,6 +1,6 @@
 package org.column4j.aggregator;
 
-import org.column4j.ColumnVector;
+import org.column4j.mutable.primitive.IntMutableColumn;
 
 /**
  * @author sibmaks
@@ -8,6 +8,6 @@ import org.column4j.ColumnVector;
  */
 public interface IntAggregator {
 
-    int aggregate(ColumnVector<int[]> column, int from, int to);
+    int aggregate(IntMutableColumn column, int from, int to);
 
 }

@@ -154,6 +154,7 @@ public class IntMutableColumnImpl implements IntMutableColumn {
         return data;
     }
 
+    @Override
     public int getTombstone() {
         return tombstone;
     }

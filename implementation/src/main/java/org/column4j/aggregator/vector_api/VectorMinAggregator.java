@@ -3,8 +3,8 @@ package org.column4j.aggregator.vector_api;
 import jdk.incubator.vector.IntVector;
 import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
-import org.column4j.ColumnVector;
 import org.column4j.aggregator.IntAggregator;
+import org.column4j.mutable.primitive.IntMutableColumn;
 
 /**
  * @author sibmaks
@@ -21,18 +21,21 @@ public class VectorMinAggregator implements IntAggregator {
     }
 
     @Override
-    public int aggregate(ColumnVector<int[]> column, int from, int to) {
+    public int aggregate(IntMutableColumn column, int from, int to) {
         var data = column.getData();
+        var tombstone = column.getTombstone();
         from = Math.max(from, column.firstRowIndex());
         var intVector = IntVector.broadcast(speciesPreferred, Integer.MAX_VALUE);
         for(; from < to && from + speciesLength <= to; from += speciesLength) {
             var nextIntVector = IntVector.fromArray(speciesPreferred, data, from);
-            intVector = intVector.min(nextIntVector);
+            var tombstoneMask = nextIntVector.eq(tombstone).not();
+            intVector = intVector.lanewise(VectorOperators.MIN, nextIntVector, tombstoneMask);
         }
         var min = intVector.reduceLanes(VectorOperators.MIN);
         // tail
         for(; from < to; from++) {
-            min = Math.min(min, data[from]);
+            var value = data[from];
+            min = value == tombstone ? min : Math.min(min, value);
         }
         return min;
     }
