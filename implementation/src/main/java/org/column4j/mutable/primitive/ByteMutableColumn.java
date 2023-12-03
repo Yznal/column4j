@@ -14,4 +14,10 @@ public interface ByteMutableColumn extends MutableColumn<byte[]> {
      * @param value value to write
      */
     void write(int position, byte value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    byte getTombstone();
 }

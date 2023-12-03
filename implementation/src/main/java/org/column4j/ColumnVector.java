@@ -6,7 +6,7 @@ package org.column4j;
  * @author sibmaks
  * @since 0.0.1
  */
-public interface ColumnVector<T> extends Column<T> {
+public interface ColumnVector<T> extends Column {
 
     /**
      * @return get column raw data

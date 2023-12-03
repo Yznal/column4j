@@ -14,4 +14,10 @@ public interface IntMutableColumn extends MutableColumn<int[]> {
      * @param value value to write
      */
     void write(int position, int value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    int getTombstone();
 }

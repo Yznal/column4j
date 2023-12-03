@@ -14,4 +14,10 @@ public interface DoubleMutableColumn extends MutableColumn<double[]> {
      * @param value value to write
      */
     void write(int position, double value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    double getTombstone();
 }

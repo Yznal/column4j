@@ -14,4 +14,10 @@ public interface CharMutableColumn extends MutableColumn<char[]> {
      * @param value value to write
      */
     void write(int position, char value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    char getTombstone();
 }

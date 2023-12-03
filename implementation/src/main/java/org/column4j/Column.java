@@ -6,7 +6,7 @@ package org.column4j;
  * @author sibmaks
  * @since 0.0.1
  */
-public interface Column<T> {
+public interface Column {
     /**
      * The method returns the index of the first non-empty line in the column, or {@code -1}
      * if the column does not contain data.
@@ -16,7 +16,7 @@ public interface Column<T> {
     int firstRowIndex();
 
     /**
-     * @return amount of unique values in column
+     * @return size of column space including reserved
      */
     int capacity();
 

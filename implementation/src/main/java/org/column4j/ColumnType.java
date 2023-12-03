@@ -7,12 +7,11 @@ package org.column4j;
  * @since 0.0.1
  */
 public enum ColumnType {
-    FLOAT64,
-    FLOAT32,
-    INT64,
-    INT32,
-    INT16,
     INT8,
-    BOOL,
+    INT16,
+    INT32,
+    INT64,
+    FLOAT32,
+    FLOAT64,
     STRING
 }

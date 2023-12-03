@@ -14,4 +14,10 @@ public interface LongMutableColumn extends MutableColumn<long[]> {
      * @param value value to write
      */
     void write(int position, long value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    long getTombstone();
 }

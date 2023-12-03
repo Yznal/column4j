@@ -14,4 +14,10 @@ public interface ShortMutableColumn extends MutableColumn<short[]> {
      * @param value value to write
      */
     void write(int position, short value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    short getTombstone();
 }

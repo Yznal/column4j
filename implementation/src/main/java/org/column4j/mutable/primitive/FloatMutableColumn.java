@@ -14,4 +14,10 @@ public interface FloatMutableColumn extends MutableColumn<float[]> {
      * @param value value to write
      */
     void write(int position, float value);
+
+    /**
+     * Get column value what must be interpreter as empty value.
+     * @return tombstoneHolder value
+     */
+    float getTombstone();
 }
