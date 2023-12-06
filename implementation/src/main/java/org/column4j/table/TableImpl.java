@@ -3,6 +3,8 @@ package org.column4j.table;
 import org.column4j.ColumnType;
 import org.column4j.mutable.MutableColumn;
 import org.column4j.mutable.aggregated.*;
+import org.column4j.table.query.insert.InsertQuery;
+import org.column4j.table.query.select.SelectionOrAggregationQuery;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,6 +103,11 @@ class TableImpl implements Table {
                 }
             }
         };
+    }
+
+    @Override
+    public SelectionOrAggregationQuery select() {
+        throw new UnsupportedOperationException("To be implemented");
     }
 
     static class TableBuilderImpl implements TableBuilder {

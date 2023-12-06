@@ -1,5 +1,8 @@
 package org.column4j.table;
 
+import org.column4j.table.query.insert.InsertQuery;
+import org.column4j.table.query.select.SelectionOrAggregationQuery;
+
 /**
  * @author sibmaks
  * @since 0.0.1
@@ -19,8 +22,6 @@ public interface Table {
      */
     InsertQuery insert();
 
-    /**
-     * What kind of select request we have to implement?
-     */
+    SelectionOrAggregationQuery select();
 
 }

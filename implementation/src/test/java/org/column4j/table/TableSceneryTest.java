@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * @author sibmaks
  * @since 0.0.1
@@ -38,8 +40,39 @@ class TableSceneryTest {
         }
 
         // TODO: implement select query
+        var selectionResult = table.select()
+                .column("users")
+                .column("cpu_usage")
+                .column("errors")
+                .where()
+                .between("errors", 1, true, Short.MAX_VALUE, true)
+                .execute();
 
+        var selectionColumns = selectionResult.getColumns();
+        assertEquals(3, selectionColumns.size());
+        assertTrue(selectionColumns.contains("users"));
+        assertTrue(selectionColumns.contains("cpu_usage"));
+        assertTrue(selectionColumns.contains("errors"));
 
+        var aggregationResult = table.select()
+                .min("users", "users_min")
+                .max("users", "users_max")
+                .count("users", "users_count")
+                .where()
+                .between("errors", 1, true, Short.MAX_VALUE, true)
+                .execute();
+
+        var columns = aggregationResult.getColumns();
+        assertEquals(3, columns.size());
+        assertTrue(columns.contains("users_min"));
+        assertTrue(columns.contains("users_max"));
+        assertTrue(columns.contains("users_count"));
+
+        var rows = aggregationResult.getRows();
+        assertTrue(rows.hasNext());
+
+        var aggregatedRow = rows.next();
+        assertFalse(rows.hasNext());
     }
 
 }

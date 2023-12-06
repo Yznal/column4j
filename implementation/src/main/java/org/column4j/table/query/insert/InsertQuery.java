@@ -1,4 +1,4 @@
-package org.column4j.table;
+package org.column4j.table.query.insert;
 
 /**
  * @author sibmaks
