@@ -1,6 +1,7 @@
 package org.column4j.table;
 
 import org.column4j.table.query.insert.InsertQuery;
+import org.column4j.table.query.insert.PreparedInsertQuery;
 import org.column4j.table.query.select.SelectionOrAggregationQuery;
 
 /**
@@ -19,9 +20,21 @@ public interface Table {
 
     /**
      * Start insertion query
+     * @return insertion query instance
      */
     InsertQuery insert();
 
+
+    /**
+     * Start insertion query preparation
+     * @return insertion query instance
+     */
+    PreparedInsertQuery prepareInsert();
+
+    /**
+     * Start selection query
+     * @return selection query instance
+     */
     SelectionOrAggregationQuery select();
 
 }
