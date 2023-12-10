@@ -1,4 +1,4 @@
-package org.column4j.index.temporal.column;
+package org.column4j.index.v3.inverted.column;
 
 
 import javax.annotation.Nullable;

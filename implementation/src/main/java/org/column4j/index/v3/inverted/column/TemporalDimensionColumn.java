@@ -1,4 +1,4 @@
-package org.column4j.index.temporal.column;
+package org.column4j.index.v3.inverted.column;
 
 import org.eclipse.collections.api.list.primitive.MutableIntList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;

@@ -1,5 +1,6 @@
-package org.column4j.index.temporal.meta;
+package org.column4j.index.v3.chunk;
 
+import org.column4j.index.v3.chunk.ColumnMeta;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

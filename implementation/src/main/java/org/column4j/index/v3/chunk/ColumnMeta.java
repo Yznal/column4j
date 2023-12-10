@@ -1,4 +1,4 @@
-package org.column4j.index.temporal.meta;
+package org.column4j.index.v3.chunk;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
