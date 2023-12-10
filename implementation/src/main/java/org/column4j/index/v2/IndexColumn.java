@@ -3,7 +3,6 @@ package org.column4j.index.v2;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Map;
 
 @ParametersAreNonnullByDefault
 public interface IndexColumn<ResultType> {
