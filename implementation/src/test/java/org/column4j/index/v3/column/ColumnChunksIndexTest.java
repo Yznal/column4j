@@ -1,24 +1,24 @@
-package org.column4j.index.v3.chunk;
+package org.column4j.index.v3.column;
 
-import org.column4j.index.v3.chunk.ColumnMeta;
+import org.column4j.index.v3.column.ColumnChunksIndex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ColumnMetaTest {
+class ColumnChunksIndexTest {
 
-    ColumnMeta testMeta;
+    ColumnChunksIndex testMeta;
 
 
-    // [10,15)----[25,30)-----[40,45)------[92,120)
+    // [10,15)----[25,30)-----[40,45)------[92,97)
     @BeforeEach
     void setUp() {
-        testMeta = new ColumnMeta(0, 8);
-        testMeta.addChunk(0 ,10, 5);
-        testMeta.addChunk(3 ,25, 5);
-        testMeta.addChunk(7 ,40, 5);
-        testMeta.addChunk(23 ,92, 28);
+        testMeta = new ColumnChunksIndex(5, 8);
+        testMeta.addChunk(0 ,10);
+        testMeta.addChunk(3 ,25);
+        testMeta.addChunk(7 ,40);
+        testMeta.addChunk(23 ,92);
 
     }
 
@@ -26,16 +26,16 @@ class ColumnMetaTest {
     void addChunk() {
         assertFalse(testMeta.empty());
         assertArrayEquals(new int[] {0, 3, 7, 23, 0, 0, 0, 0}, testMeta.getData());
-        testMeta.addChunk(30, 150, 10);
-        testMeta.addChunk(40, 170, 10);
+        testMeta.addChunk(30, 150);
+        testMeta.addChunk(40, 170);
         assertArrayEquals(new int[] {0, 3, 7, 23, 30, 40, 0, 0}, testMeta.getData());
         //out of order
-        testMeta.addChunk(25, 130, 10);
+        testMeta.addChunk(25, 130);
         assertArrayEquals(new int[] {0, 3, 7, 23, 25, 30, 40, 0}, testMeta.getData());
-        testMeta.addChunk(45, 180, 10);
+        testMeta.addChunk(45, 180);
         assertEquals(8, testMeta.getData().length);
         // expand
-        testMeta.addChunk(36, 190,10);
+        testMeta.addChunk(36, 190);
         assertEquals(16, testMeta.getData().length);
         assertArrayEquals(new int[] {0, 3, 7, 23, 25, 30, 40, 45, 36, 0,0,0,0,0,0,0}, testMeta.getData());
     }
@@ -132,7 +132,7 @@ class ColumnMetaTest {
     }
 
 
-    private void testSearch(int[] expected, long start, long end) {
+    private void testSearch(int[] expected, int start, int end) {
         int[] result = testMeta.searchInterval(start, end);
         assertNotNull(result);
         assertArrayEquals(expected, result);
