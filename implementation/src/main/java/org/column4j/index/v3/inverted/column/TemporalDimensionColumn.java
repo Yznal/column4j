@@ -24,11 +24,7 @@ public class TemporalDimensionColumn implements DimensionColumn {
     @Nullable
     @Override
     public RoaringBitmap lookup(CharSequence dimName) {
-        RoaringBitmap pointers = dataPointers.get(dimName);
-        if (pointers == null) {
-            return RoaringBitmap.
-        }
         // maybe store in caller-provided accumulator instead
-        return pointers;
+        return dataPointers.get(dimName);
     }
 }
