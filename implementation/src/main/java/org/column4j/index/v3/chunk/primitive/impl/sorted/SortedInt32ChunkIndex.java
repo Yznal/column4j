@@ -10,11 +10,11 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
     private final int[] data;
 
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data, int startOffset) {
-        return fromChunk(data, startOffset, DEFAULT_SEGMENT_SIZE);
+    public static SortedInt32ChunkIndex fromChunk(int[] data) {
+        return fromChunk(data,  DEFAULT_SEGMENT_SIZE);
     }
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data, int startOffset, int segmentSize) {
+    public static SortedInt32ChunkIndex fromChunk(int[] data, int segmentSize) {
         record Pair(int data, int offset) {}
         Pair[] sorting = new Pair[data.length];
         for (int i = 0; i < data.length; i++) {
@@ -40,16 +40,19 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
                 segments[segmentIdx++] = sortedData[i];
             }
         }
-        return new SortedInt32ChunkIndex(startOffset, segmentSize, segments, sortedData, offsets);
+        return new SortedInt32ChunkIndex(segmentSize, segments, sortedData, offsets);
     }
 
-    protected SortedInt32ChunkIndex(int chunkOffset, int segmentSize, int[] segments, int[] data, int[] offsets) {
-        super(chunkOffset, offsets, segmentSize, segments);
+    protected SortedInt32ChunkIndex(int segmentSize, int[] segments, int[] data, int[] offsets) {
+        super(offsets, segmentSize, segments);
         this.data = data;
     }
 
     @Override
     public boolean contains(int value) {
+        if (value < segments[0]) {
+            return false;
+        }
         int segment = segmentSearch(value);
         if (segment >= 0) {
             return true;
@@ -93,7 +96,7 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
     }
 
     private int segmentSearch(int value) {
-        return Arrays.binarySearch(data, value);
+        return leftBinarySearch(segments, value);
     }
 
     private int probeSegmentsRight(int segment, int value) {
@@ -109,7 +112,7 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
     private int searchInSegment(int segNum, int value) {
         int start = segNum * segmentSize;
         int end = Math.min(start + segmentSize, data.length);
-        return Arrays.binarySearch(data, start, end, value);
+        return leftBinarySearch(data, start, end, value);
     }
 
     private int searchRight(int idx, int value) {
@@ -124,6 +127,31 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
             idx++;
         }
         return idx;
+    }
+
+
+    private int leftBinarySearch(int[] arr,  int value) {
+        return leftBinarySearch(arr, 0, arr.length, value);
+    }
+
+    // we need to find leftmost index instead of random
+    private int leftBinarySearch(int[] arr, int begin, int end, int value) {
+        if (arr[0] == value) {
+            return 0;
+        }
+        int l = begin, r = end;
+        while (r - l > 1) {
+            int mid = l + (r - l) / 2;
+            if (arr[mid] < value) {
+                l = mid;
+            } else {
+                r = mid;
+            }
+        }
+        if (r >= arr.length || arr[r] != value) {
+            return -r;
+        }
+        return r;
     }
 
 }
