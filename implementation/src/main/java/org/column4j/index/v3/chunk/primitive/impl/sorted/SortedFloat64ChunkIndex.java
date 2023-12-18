@@ -1,53 +1,54 @@
 package org.column4j.index.v3.chunk.primitive.impl.sorted;
 
 import org.column4j.index.v3.chunk.BinarySearch;
-import org.column4j.index.v3.chunk.primitive.Int32ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.Float64ChunkIndex;
+
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32ChunkIndex {
+public class SortedFloat64ChunkIndex extends SortedChunkIndex implements Float64ChunkIndex {
 
-    private final int[] dataRef;
+    private final double[] dataRef;
 
-    private final int[] segments;
+    private final double[] segments;
 
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data) {
+    public static SortedFloat64ChunkIndex fromChunk(double[] data) {
         return fromChunk(data,  DEFAULT_SEGMENT_SIZE);
     }
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data, int segmentSize) {
-        record Pair(int data, int offset) {}
+    public static SortedFloat64ChunkIndex fromChunk(double[] data, int segmentSize) {
+        record Pair(double data, int offset) {}
         Pair[] sorting = new Pair[data.length];
         for (int i = 0; i < data.length; i++) {
             sorting[i] = new Pair(data[i], i);
         }
-        Arrays.sort(sorting, Comparator.comparingInt(a -> a.data));
+        Arrays.sort(sorting, Comparator.comparingDouble(a -> a.data));
 
         int[] offsets = new int[data.length];
         int segmentIdx = 0;
         int segmentCount = data.length % segmentSize == 0
                 ? data.length / segmentSize
                 : data.length / segmentSize + 1;
-        int[] segments = new int[segmentCount];
+        double[] segments = new double[segmentCount];
         for (int i = 0; i < data.length; i++) {;
             offsets[i] = sorting[i].offset;
             if (i % segmentSize == 0) {
                 segments[segmentIdx++] = data[offsets[i]];
             }
         }
-        return new SortedInt32ChunkIndex(segmentSize, segments, data, offsets);
+        return new SortedFloat64ChunkIndex(segmentSize, segments, data, offsets);
     }
 
-    protected SortedInt32ChunkIndex(int segmentSize, int[] segments, int[] dataRef, int[] offsets) {
+    protected SortedFloat64ChunkIndex(int segmentSize, double[] segments, double[] dataRef, int[] offsets) {
         super(offsets, segmentSize);
         this.dataRef = dataRef;
         this.segments = segments;
     }
 
     @Override
-    public boolean contains(int value) {
+    public boolean contains(double value) {
         if (value < segments[0]) {
             return false;
         }
@@ -61,7 +62,7 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
 
 
     @Override
-    public int[] lookupValues(int value) {
+    public int[] lookupValues(double value) {
         if (value < segments[0]) {
             return null;
         }
@@ -93,11 +94,11 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
         return res;
     }
 
-    private int segmentSearch(int value) {
+    private int segmentSearch(double value) {
         return BinarySearch.leftSearch(segments, 0, segments.length, value);
     }
 
-    private int probeSegmentsRight(int segment, int value) {
+    private int probeSegmentsRight(int segment, double value) {
         if (segment == segments.length - 1 || segments[segment + 1] != value) {
             return -1;
         }
@@ -107,20 +108,20 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
         return segment;
     }
 
-    private int searchInSegment(int segNum, int value) {
+    private int searchInSegment(int segNum, double value) {
         int start = segNum * segmentSize;
         int end = Math.min(start + segmentSize, dataRef.length);
         return BinarySearch.leftIndirectSearch(localOffsets, dataRef, start, end, value);
     }
 
-    private int searchRight(int idx, int value) {
+    private int searchRight(int idx, double value) {
         while (idx < localOffsets.length - 1 && dataRef[localOffsets[idx + 1]] == value) {
             idx++;
         }
         return idx;
     }
 
-    private int searchLeft(int idx, int value) {
+    private int searchLeft(int idx, double value) {
         while (idx > 1 && dataRef[localOffsets[idx - 1]] == value) {
             idx++;
         }

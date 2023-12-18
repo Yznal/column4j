@@ -11,18 +11,11 @@ public interface Int16ChunkIndex extends ChunkIndex {
      */
     boolean contains(short value);
 
-    /**
-     * Indexes value at given offset
-     * @param offset global value offset
-     * @param value value
-     */
-    void insertRecord(int offset, short value);
-
 
     /**
      * looks up indices of values in chunk
      * @param value searched value
      * @return indices of value
      */
-    int[] lookupValue(short value);
+    int[] lookupValues(short value);
 }

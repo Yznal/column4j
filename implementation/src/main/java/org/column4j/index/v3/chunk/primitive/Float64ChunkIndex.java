@@ -11,18 +11,12 @@ public interface Float64ChunkIndex extends ChunkIndex {
      */
     boolean contains(double value);
 
-    /**
-     * Indexes value at given offset
-     * @param offset global value offset
-     * @param value value
-     */
-    void insertRecord(int offset, double value);
 
 
     /**
      * looks up indices of values in chunk
      * @param value searched value
-     * @return indices  value
+     * @return indices of value
      */
-    int[] lookupValue(double value);
+    int[] lookupValues(double value);
 }

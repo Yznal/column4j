@@ -12,19 +12,16 @@ public abstract class SortedChunkIndex {
 
 
     protected final int[] localOffsets;
-    protected final int[] segments;
 
     protected final int segmentSize;
 
     /**
      *
-     * @param chunkOffset global cursor offset where chunk starts, corresponds to data[0]
      * @param localOffsets offsets of sorted stored values
      */
-    protected SortedChunkIndex(int[] localOffsets, int segmentSize, int[] segments) {
+    protected SortedChunkIndex(int[] localOffsets, int segmentSize) {
         this.localOffsets = localOffsets;
         this.segmentSize = segmentSize;
-        this.segments = segments;
     }
 
 }

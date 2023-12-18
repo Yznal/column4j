@@ -9,12 +9,6 @@ public interface Float32ChunkIndex {
      */
     boolean contains(float value);
 
-    /**
-     * Indexes value at given offset
-     * @param offset global value offset
-     * @param value value
-     */
-    void insertRecord(int offset, float value);
 
 
     /**
@@ -22,5 +16,5 @@ public interface Float32ChunkIndex {
      * @param value searched value
      * @return indices of value
      */
-    int[] lookupValue(float value);
+    int[] lookupValues(float value);
 }

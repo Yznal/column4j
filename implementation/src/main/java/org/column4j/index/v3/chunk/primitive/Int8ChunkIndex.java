@@ -11,12 +11,6 @@ public interface Int8ChunkIndex extends ChunkIndex {
      */
     boolean contains(byte value);
 
-    /**
-     * Indexes value at given offset
-     * @param offset global value offset
-     * @param value value
-     */
-    void insertRecord(int offset, byte value);
 
 
     /**

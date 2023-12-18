@@ -1,24 +1,24 @@
 package org.column4j.index.v3.chunk.primitive.impl.sorted;
 
 import org.column4j.index.v3.chunk.BinarySearch;
-import org.column4j.index.v3.chunk.primitive.Int32ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.Int8ChunkIndex;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32ChunkIndex {
+public class SortedInt8ChunkIndex extends SortedChunkIndex implements Int8ChunkIndex {
 
-    private final int[] dataRef;
+    private final byte[] dataRef;
 
-    private final int[] segments;
+    private final byte[] segments;
 
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data) {
+    public static SortedInt8ChunkIndex fromChunk(byte[] data) {
         return fromChunk(data,  DEFAULT_SEGMENT_SIZE);
     }
 
-    public static SortedInt32ChunkIndex fromChunk(int[] data, int segmentSize) {
-        record Pair(int data, int offset) {}
+    public static SortedInt8ChunkIndex fromChunk(byte[] data, int segmentSize) {
+        record Pair(byte data, int offset) {}
         Pair[] sorting = new Pair[data.length];
         for (int i = 0; i < data.length; i++) {
             sorting[i] = new Pair(data[i], i);
@@ -30,24 +30,24 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
         int segmentCount = data.length % segmentSize == 0
                 ? data.length / segmentSize
                 : data.length / segmentSize + 1;
-        int[] segments = new int[segmentCount];
+        byte[] segments = new byte[segmentCount];
         for (int i = 0; i < data.length; i++) {;
             offsets[i] = sorting[i].offset;
             if (i % segmentSize == 0) {
                 segments[segmentIdx++] = data[offsets[i]];
             }
         }
-        return new SortedInt32ChunkIndex(segmentSize, segments, data, offsets);
+        return new SortedInt8ChunkIndex(segmentSize, segments, data, offsets);
     }
 
-    protected SortedInt32ChunkIndex(int segmentSize, int[] segments, int[] dataRef, int[] offsets) {
+    protected SortedInt8ChunkIndex(int segmentSize, byte[] segments, byte[] dataRef, int[] offsets) {
         super(offsets, segmentSize);
         this.dataRef = dataRef;
         this.segments = segments;
     }
 
     @Override
-    public boolean contains(int value) {
+    public boolean contains(byte value) {
         if (value < segments[0]) {
             return false;
         }
@@ -61,7 +61,7 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
 
 
     @Override
-    public int[] lookupValues(int value) {
+    public int[] lookupValues(byte value) {
         if (value < segments[0]) {
             return null;
         }
@@ -93,11 +93,11 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
         return res;
     }
 
-    private int segmentSearch(int value) {
+    private int segmentSearch(byte value) {
         return BinarySearch.leftSearch(segments, 0, segments.length, value);
     }
 
-    private int probeSegmentsRight(int segment, int value) {
+    private int probeSegmentsRight(int segment, byte value) {
         if (segment == segments.length - 1 || segments[segment + 1] != value) {
             return -1;
         }
@@ -107,20 +107,20 @@ public class SortedInt32ChunkIndex extends SortedChunkIndex implements Int32Chun
         return segment;
     }
 
-    private int searchInSegment(int segNum, int value) {
+    private int searchInSegment(int segNum, byte value) {
         int start = segNum * segmentSize;
         int end = Math.min(start + segmentSize, dataRef.length);
         return BinarySearch.leftIndirectSearch(localOffsets, dataRef, start, end, value);
     }
 
-    private int searchRight(int idx, int value) {
+    private int searchRight(int idx, byte value) {
         while (idx < localOffsets.length - 1 && dataRef[localOffsets[idx + 1]] == value) {
             idx++;
         }
         return idx;
     }
 
-    private int searchLeft(int idx, int value) {
+    private int searchLeft(int idx, byte value) {
         while (idx > 1 && dataRef[localOffsets[idx - 1]] == value) {
             idx++;
         }
