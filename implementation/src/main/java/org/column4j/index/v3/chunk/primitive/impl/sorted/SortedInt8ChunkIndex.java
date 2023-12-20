@@ -3,6 +3,7 @@ package org.column4j.index.v3.chunk.primitive.impl.sorted;
 import org.column4j.index.v3.chunk.BinarySearch;
 import org.column4j.index.v3.chunk.primitive.Int8ChunkIndex;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -60,6 +61,7 @@ public class SortedInt8ChunkIndex extends SortedChunkIndex implements Int8ChunkI
     }
 
 
+    @Nullable
     @Override
     public int[] lookupValues(byte value) {
         if (value < segments[0]) {

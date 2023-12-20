@@ -3,6 +3,7 @@ package org.column4j.index.v3.chunk.primitive.impl.sorted;
 import org.column4j.index.v3.chunk.BinarySearch;
 import org.column4j.index.v3.chunk.primitive.Float32ChunkIndex;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -60,6 +61,7 @@ public class SortedFloat32ChunkIndex extends SortedChunkIndex implements Float32
     }
 
 
+    @Nullable
     @Override
     public int[] lookupValues(float value) {
         if (value < segments[0]) {

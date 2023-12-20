@@ -4,6 +4,7 @@ import org.column4j.index.v3.chunk.BinarySearch;
 import org.column4j.index.v3.chunk.primitive.Float64ChunkIndex;
 
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -61,6 +62,7 @@ public class SortedFloat64ChunkIndex extends SortedChunkIndex implements Float64
     }
 
 
+    @Nullable
     @Override
     public int[] lookupValues(double value) {
         if (value < segments[0]) {

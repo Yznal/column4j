@@ -2,6 +2,8 @@ package org.column4j.index.v3.chunk.primitive;
 
 import org.column4j.index.v3.chunk.ChunkIndex;
 
+import javax.annotation.Nullable;
+
 public interface Int16ChunkIndex extends ChunkIndex {
 
     /**
@@ -17,5 +19,6 @@ public interface Int16ChunkIndex extends ChunkIndex {
      * @param value searched value
      * @return indices of value
      */
+    @Nullable
     int[] lookupValues(short value);
 }

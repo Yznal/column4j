@@ -1,5 +1,7 @@
 package org.column4j.index.v3.chunk.primitive;
 
+import javax.annotation.Nullable;
+
 public interface Float32ChunkIndex {
 
     /**
@@ -16,5 +18,6 @@ public interface Float32ChunkIndex {
      * @param value searched value
      * @return indices of value
      */
+    @Nullable
     int[] lookupValues(float value);
 }
