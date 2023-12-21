@@ -53,7 +53,9 @@ public class Int64MutableColumnChunkImpl implements Int64MutableColumnChunk {
 
     private long[] allocate() {
         var data = new long[size];
-        Arrays.fill(data, tombstone);
+        if (tombstone != 0L) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 

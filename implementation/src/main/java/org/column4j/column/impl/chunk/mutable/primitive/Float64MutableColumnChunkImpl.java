@@ -52,7 +52,9 @@ public class Float64MutableColumnChunkImpl implements Float64MutableColumnChunk 
 
     private double[] allocate() {
         var data = new double[size];
-        Arrays.fill(data, tombstone);
+        if (Double.compare(tombstone, 0.d) != 0) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 

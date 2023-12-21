@@ -53,7 +53,9 @@ public class Int16MutableColumnChunkImpl implements Int16MutableColumnChunk {
 
     private short[] allocate() {
         var data = new short[size];
-        Arrays.fill(data, tombstone);
+        if (tombstone != (short) 0) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 

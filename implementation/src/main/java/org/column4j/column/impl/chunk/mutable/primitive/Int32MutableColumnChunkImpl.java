@@ -53,7 +53,9 @@ public class Int32MutableColumnChunkImpl implements Int32MutableColumnChunk {
 
     private int[] allocate() {
         var data = new int[size];
-        Arrays.fill(data, tombstone);
+        if (tombstone != 0) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 

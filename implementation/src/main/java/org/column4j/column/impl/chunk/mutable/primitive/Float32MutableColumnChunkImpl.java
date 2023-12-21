@@ -52,7 +52,9 @@ public class Float32MutableColumnChunkImpl implements Float32MutableColumnChunk 
 
     private float[] allocate() {
         var data = new float[size];
-        Arrays.fill(data, tombstone);
+        if (Float.compare(tombstone, 0.f) != 0) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 

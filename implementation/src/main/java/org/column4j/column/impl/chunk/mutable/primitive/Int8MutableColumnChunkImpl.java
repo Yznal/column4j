@@ -53,7 +53,9 @@ public class Int8MutableColumnChunkImpl implements Int8MutableColumnChunk {
 
     private byte[] allocate() {
         var data = new byte[size];
-        Arrays.fill(data, tombstone);
+        if (tombstone != (byte) 0) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 
