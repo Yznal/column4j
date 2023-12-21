@@ -4,9 +4,8 @@ import org.column4j.column.mutable.MutableColumn;
 import org.column4j.column.mutable.StringMutableColumn;
 import org.column4j.column.mutable.primitive.*;
 import org.column4j.table.MutableTable;
+import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.SequencedMap;
 
 /**
@@ -14,12 +13,12 @@ import java.util.SequencedMap;
  * @since 0.0.1
  */
 public class MutableTableImpl implements MutableTable {
-    private final Map<String, Integer> columnNameIndexes;
+    private final ObjectIntHashMap<String> columnNameIndexes;
     private final MutableColumn<?, ?>[] mutableColumns;
 
     public MutableTableImpl(SequencedMap<String, MutableColumn<?, ?>> mutableColumns) {
         this.mutableColumns = new MutableColumn[mutableColumns.size()];
-        this.columnNameIndexes = new HashMap<>(mutableColumns.size(), 1);
+        this.columnNameIndexes = new ObjectIntHashMap<String>(mutableColumns.size());
         var index = 0;
         for (var entry : mutableColumns.entrySet()) {
             this.mutableColumns[index] = entry.getValue();
@@ -72,7 +71,7 @@ public class MutableTableImpl implements MutableTable {
 
     @Override
     public int getColumnIndex(String columnName) {
-        return columnNameIndexes.getOrDefault(columnName, -1);
+        return columnNameIndexes.getIfAbsent(columnName, -1);
     }
 
     @Override
@@ -119,28 +118,29 @@ public class MutableTableImpl implements MutableTable {
 
     @Override
     public <T> T getByIndexes(int columnIndex, int[] indexes) {
-        var mutableColumn = getMutableColumn(columnIndex);
+        MutableColumn<T, ?> mutableColumn = getMutableColumn(columnIndex);
         return (T) mutableColumn.getByIndexes(indexes);
     }
 
     @Override
     public <T> T getByIndexes(int columnIndex, int from, int to) {
-        var mutableColumn = getMutableColumn(columnIndex);
+        MutableColumn<T, ?> mutableColumn = getMutableColumn(columnIndex);
         return (T) mutableColumn.getByIndexes(from, to);
     }
 
     @Override
     public <T> void readByIndexes(int columnIndex, int[] indexes, T buffer) {
-        MutableColumn mutableColumn = getMutableColumn(columnIndex);
+        MutableColumn<T, ?> mutableColumn = getMutableColumn(columnIndex);
         mutableColumn.readByIndexes(indexes, buffer);
     }
 
     @Override
     public <T> void readByIndexes(int columnIndex, int from, int to, T buffer) {
-        MutableColumn mutableColumn = getMutableColumn(columnIndex);
+        MutableColumn<T, ?> mutableColumn = getMutableColumn(columnIndex);
         mutableColumn.readByIndexes(from, to, buffer);
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T getTypedColumn(int columnIndex, Class<T> columnType) {
         var mutableColumn = getMutableColumn(columnIndex);
         if (columnType.isInstance(mutableColumn)) {
@@ -151,11 +151,12 @@ public class MutableTableImpl implements MutableTable {
         }
     }
 
-    protected MutableColumn<?, ?> getMutableColumn(int columnIndex) {
+    @SuppressWarnings("unchecked")
+    protected <X> MutableColumn<X, ?> getMutableColumn(int columnIndex) {
         if (columnIndex < 0 || columnIndex >= mutableColumns.length) {
             throw new IllegalArgumentException("Column with index %d doesn't exists".formatted(columnIndex));
         }
         var mutableColumn = mutableColumns[columnIndex];
-        return mutableColumn;
+        return (MutableColumn<X, ?>) mutableColumn;
     }
 }
