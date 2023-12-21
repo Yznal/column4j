@@ -53,7 +53,9 @@ public class StringMutableColumnChunkImpl implements StringMutableColumnChunk {
 
     private String[] allocate() {
         var data = new String[size];
-        Arrays.fill(data, tombstone);
+        if (tombstone != null) {
+            Arrays.fill(data, tombstone);
+        }
         return data;
     }
 
