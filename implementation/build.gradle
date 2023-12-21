@@ -35,6 +35,7 @@ dependencies {
     compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     implementation group: 'org.eclipse.collections', name: 'eclipse-collections', version: '8.2.1'
     implementation group: 'org.roaringbitmap', name: 'RoaringBitmap', version: '1.0.0'
+    implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
 
     implementation group: 'com.google.guava', name: 'guava', version: lib_guava_version
 

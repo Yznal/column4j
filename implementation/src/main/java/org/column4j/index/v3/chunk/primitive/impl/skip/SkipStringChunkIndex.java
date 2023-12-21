@@ -1,18 +1,20 @@
 package org.column4j.index.v3.chunk.primitive.impl.skip;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import org.column4j.index.v3.chunk.primitive.mutable.MutableInt32ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.mutable.MutableStringChunkIndex;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
-public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32ChunkIndex {
+public class SkipStringChunkIndex extends SkipChunkIndex implements MutableStringChunkIndex {
 
-    private final int[] dataRef;
+    private final String[] dataRef;
 
     private final int[] segmentsMin;
     private final int[] segmentsMax;
 
-    public SkipInt32ChunkIndex(int[] data, int segmentSize) {
+    public SkipStringChunkIndex(String[] data, int segmentSize) {
         super(segmentSize);
         this.dataRef = data;
 
@@ -24,12 +26,13 @@ public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32C
         this.segmentsMax = new int[segmentCount];
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
-        for (int i = data.length - 1; i >= 0 ; i--) {;
-            if (data[i] > max) {
-                max = data[i];
+        for (int i = data.length - 1; i >= 0 ; i--) {
+            int valueHash = data[i].hashCode();
+            if (valueHash > max) {
+                max = valueHash;
             }
-            if (data[i] < min) {
-                min = data[i];
+            if (valueHash < min) {
+                min = valueHash;
             }
             if (i % segmentSize == 0) {
                 segmentsMin[segmentIdx] = min;
@@ -41,19 +44,17 @@ public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32C
         }
     }
 
-    public SkipInt32ChunkIndex(int[] data) {
+    public SkipStringChunkIndex(String[] data) {
         this(data, DEFAULT_SEGMENT_SIZE);
     }
 
     @Override
-    public boolean contains(int value) {
+    public boolean contains(@Nonnull String value) {
+        int valueHash = value.hashCode();
         for (int s = 0; s < segmentsMin.length; s++) {
-            if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
-                if (value == segmentsMin[s] || value == segmentsMax[s]){
-                    return true;
-                }
+            if (valueHash >= segmentsMin[s] && valueHash <= segmentsMax[s]) {
                 for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
-                    if (dataRef[i] == value) {
+                    if (Objects.equals(dataRef[i], value)) {
                         return true;
                     }
                 }
@@ -64,12 +65,13 @@ public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32C
 
     @Nullable
     @Override
-    public int[] lookupValues(int value) {
+    public int[] lookupValues(@Nonnull String value) {
         IntArrayList res = new IntArrayList();
+        int valueHash = value.hashCode();
         for (int s = 0; s < segmentsMin.length; s++) {
-            if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
+            if (valueHash >= segmentsMin[s] && valueHash <= segmentsMax[s]) {
                 for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
-                    if (dataRef[i] == value) {
+                    if (Objects.equals(dataRef[i], value)) {
                         res.add(i);
                     }
                 }
@@ -79,13 +81,15 @@ public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32C
     }
 
     @Override
-    public void insertRecord(int offset, int value) {
+    public void insertRecord(int offset, @Nonnull String value) {
         int segment = offset / segmentSize;
-        if (value > segmentsMax[segment]) {
-            segmentsMax[segment] = value;
+        int valueHash = value.hashCode();
+        if (valueHash > segmentsMax[segment]) {
+            segmentsMax[segment] = valueHash;
         }
-        if (value < segmentsMin[segment]) {
-            segmentsMin[segment] = value;
+        if (valueHash < segmentsMin[segment]) {
+            segmentsMin[segment] = valueHash;
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package org.column4j.index.v3.chunk;
+package org.column4j.utils;
 
 public class BinarySearch {
 
