@@ -16,7 +16,7 @@ import java.util.Arrays;
 @Fork(1)
 @State(Scope.Thread)
 public class SumIntArrays {
-    @Param({ "16", "128", "1024" })
+    @Param({"16", "128", "1024"})
     public int arraySize;
 
     public int[] array;
@@ -40,7 +40,7 @@ public class SumIntArrays {
     @BenchmarkMode(Mode.Throughput)
     public int benchmarkSumViaFor() {
         int result = 0;
-        for(int i = 0; i < arraySize; i++) {
+        for (int i = 0; i < arraySize; i++) {
             result += array[i];
         }
         return result;
@@ -55,7 +55,7 @@ public class SumIntArrays {
     @BenchmarkMode(Mode.Throughput)
     public int benchmarkSumViaVector() {
         var aVector = IntVector.fromArray(speciesPreferred, array, 0);
-        for(int offset = speciesLength; offset < arraySize; offset += speciesLength) {
+        for (int offset = speciesLength; offset < arraySize; offset += speciesLength) {
             var bVector = IntVector.fromArray(speciesPreferred, array, offset);
             aVector = aVector.add(bVector);
         }
