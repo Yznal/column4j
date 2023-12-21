@@ -37,7 +37,7 @@ public class SkipInt16ChunkIndex extends SkipChunkIndex implements MutableInt16C
                 segmentsMax[segmentIdx] = max;
                 min = Short.MAX_VALUE;
                 max = Short.MIN_VALUE;
-                segmentSize--;
+                segmentIdx--;
             }
         }
     }
