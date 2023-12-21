@@ -1,13 +1,10 @@
 package org.column4j.column.impl.chunk.mutable.primitive;
 
-import com.google.common.base.Suppliers;
 import org.column4j.column.chunk.mutable.primitive.Int32MutableColumnChunk;
 import org.column4j.column.impl.statistic.Int32StatisticImpl;
 import org.column4j.column.statistic.Int32Statistic;
 
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 /**
  * @author sibmaks
@@ -16,33 +13,20 @@ import java.util.function.Supplier;
 public class Int32MutableColumnChunkImpl implements Int32MutableColumnChunk {
 
     private final int size;
-    private final AtomicBoolean initialized;
-    private final Supplier<int[]> dataSupplier;
+    private final int[] data;
     private final int tombstone;
     private final Int32Statistic statistic;
 
     public Int32MutableColumnChunkImpl(int size, int tombstone) {
         this.size = size;
-        this.initialized = new AtomicBoolean(false);
-        this.dataSupplier = Suppliers.memoize(this::allocate);
         this.tombstone = tombstone;
-        this.statistic = new Int32StatisticImpl(dataSupplier, tombstone);
-    }
-
-    @Override
-    public void tombstone(int position) {
-        write(position, tombstone);
+        this.data = this.allocate();
+        this.statistic = new Int32StatisticImpl(data, tombstone);
     }
 
     @Override
     public void write(int position, int value) {
-        if (position < 0 || position >= size) {
-            throw new IllegalArgumentException("Out of range %d".formatted(position));
-        }
-        if (value == tombstone && !initialized.get()) {
-            return;
-        }
-        var data = dataSupplier.get();
+        var data = this.data;
         var oldValue = data[position];
         if (oldValue == value) {
             return;
@@ -59,7 +43,7 @@ public class Int32MutableColumnChunkImpl implements Int32MutableColumnChunk {
 
     @Override
     public int[] getData() {
-        return dataSupplier.get();
+        return this.data;
     }
 
     @Override
@@ -70,16 +54,12 @@ public class Int32MutableColumnChunkImpl implements Int32MutableColumnChunk {
     private int[] allocate() {
         var data = new int[size];
         Arrays.fill(data, tombstone);
-        initialized.set(true);
         return data;
     }
 
     @Override
     public int get(int position) {
-        if(!initialized.get()) {
-            return tombstone;
-        }
-        var data = dataSupplier.get();
+        var data = this.data;
         return data[position];
     }
 }

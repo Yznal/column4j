@@ -1,6 +1,5 @@
 package org.column4j.index.v3.chunk.primitive.impl.hash;
 
-import org.column4j.index.v3.chunk.primitive.Int32ChunkIndex;
 import org.column4j.index.v3.chunk.primitive.mutable.MutableInt32ChunkIndex;
 import org.junit.jupiter.api.Test;
 

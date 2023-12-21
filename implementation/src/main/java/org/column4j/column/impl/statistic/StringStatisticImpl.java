@@ -3,14 +3,12 @@ package org.column4j.column.impl.statistic;
 import org.column4j.column.statistic.StringStatistic;
 import org.column4j.utils.StringUtils;
 
-import java.util.function.Supplier;
-
 /**
  * @author sibmaks
  * @since 0.0.1
  */
 public class StringStatisticImpl implements StringStatistic {
-    private final Supplier<String[]> dataSupplier;
+    private final String[] data;
     private final String tombstone;
 
     private String firstValue;
@@ -19,8 +17,8 @@ public class StringStatisticImpl implements StringStatistic {
     private int lastIndex;
     private int count;
 
-    public StringStatisticImpl(Supplier<String[]> dataSupplier, String tombstone) {
-        this.dataSupplier = dataSupplier;
+    public StringStatisticImpl(String[] data, String tombstone) {
+        this.data = data;
         this.tombstone = tombstone;
 
         this.firstIndex = -1;
@@ -63,11 +61,11 @@ public class StringStatisticImpl implements StringStatistic {
             lastIndex = -1;
             lastValue = tombstone;
         } else if (firstIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             firstIndex = StringUtils.indexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             firstValue = data[firstIndex];
         } else if (lastIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             lastIndex = StringUtils.lastIndexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             lastValue = data[lastIndex];
         }

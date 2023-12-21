@@ -3,14 +3,12 @@ package org.column4j.column.impl.statistic;
 import org.column4j.column.statistic.Int64Statistic;
 import org.column4j.utils.Int64VectorUtils;
 
-import java.util.function.Supplier;
-
 /**
  * @author sibmaks
  * @since 0.0.1
  */
 public class Int64StatisticImpl implements Int64Statistic {
-    private final Supplier<long[]> dataSupplier;
+    private final long[] data;
     private final long tombstone;
 
     private long firstValue;
@@ -22,8 +20,8 @@ public class Int64StatisticImpl implements Int64Statistic {
     private long sum;
     private int count;
 
-    public Int64StatisticImpl(Supplier<long[]> dataSupplier, long tombstone) {
-        this.dataSupplier = dataSupplier;
+    public Int64StatisticImpl(long[] data, long tombstone) {
+        this.data = data;
         this.tombstone = tombstone;
 
         this.firstIndex = -1;
@@ -48,13 +46,13 @@ public class Int64StatisticImpl implements Int64Statistic {
         if (newValue < min) {
             min = newValue;
         } else if (min == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             min = Int64VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
         }
         if (newValue > max) {
             max = newValue;
         } else if (max == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             max = Int64VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
         }
     }
@@ -88,11 +86,11 @@ public class Int64StatisticImpl implements Int64Statistic {
             lastIndex = -1;
             lastValue = tombstone;
         } else if (firstIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             firstIndex = Int64VectorUtils.indexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             firstValue = data[firstIndex];
         } else if (lastIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             lastIndex = Int64VectorUtils.lastIndexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             lastValue = data[lastIndex];
         }
@@ -101,7 +99,7 @@ public class Int64StatisticImpl implements Int64Statistic {
             if (firstIndex == -1) {
                 min = Long.MAX_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 min = Int64VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
             }
         }
@@ -109,7 +107,7 @@ public class Int64StatisticImpl implements Int64Statistic {
             if (firstIndex == -1) {
                 max = Long.MIN_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 max = Int64VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
             }
         }

@@ -3,14 +3,12 @@ package org.column4j.column.impl.statistic;
 import org.column4j.column.statistic.Float32Statistic;
 import org.column4j.utils.Float32VectorUtils;
 
-import java.util.function.Supplier;
-
 /**
  * @author sibmaks
  * @since 0.0.1
  */
 public class Float32StatisticImpl implements Float32Statistic {
-    private final Supplier<float[]> dataSupplier;
+    private final float[] data;
     private final float tombstone;
 
     private float firstValue;
@@ -22,8 +20,8 @@ public class Float32StatisticImpl implements Float32Statistic {
     private double sum;
     private int count;
 
-    public Float32StatisticImpl(Supplier<float[]> dataSupplier, float tombstone) {
-        this.dataSupplier = dataSupplier;
+    public Float32StatisticImpl(float[] data, float tombstone) {
+        this.data = data;
         this.tombstone = tombstone;
 
         this.firstIndex = -1;
@@ -48,13 +46,13 @@ public class Float32StatisticImpl implements Float32Statistic {
         if (newValue < min) {
             min = newValue;
         } else if (min == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             min = Float32VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
         }
         if (newValue > max) {
             max = newValue;
         } else if (max == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             max = Float32VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
         }
     }
@@ -88,11 +86,11 @@ public class Float32StatisticImpl implements Float32Statistic {
             lastIndex = -1;
             lastValue = tombstone;
         } else if (firstIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             firstIndex = Float32VectorUtils.indexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             firstValue = data[firstIndex];
         } else if (lastIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             lastIndex = Float32VectorUtils.lastIndexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             lastValue = data[lastIndex];
         }
@@ -101,7 +99,7 @@ public class Float32StatisticImpl implements Float32Statistic {
             if (firstIndex == -1) {
                 min = Float.MAX_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 min = Float32VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
             }
         }
@@ -109,7 +107,7 @@ public class Float32StatisticImpl implements Float32Statistic {
             if (firstIndex == -1) {
                 max = Float.MIN_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 max = Float32VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
             }
         }

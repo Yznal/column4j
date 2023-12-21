@@ -3,14 +3,12 @@ package org.column4j.column.impl.statistic;
 import org.column4j.column.statistic.Int8Statistic;
 import org.column4j.utils.Int8VectorUtils;
 
-import java.util.function.Supplier;
-
 /**
  * @author sibmaks
  * @since 0.0.1
  */
 public class Int8StatisticImpl implements Int8Statistic {
-    private final Supplier<byte[]> dataSupplier;
+    private final byte[] data;
     private final byte tombstone;
 
     private byte firstValue;
@@ -22,8 +20,8 @@ public class Int8StatisticImpl implements Int8Statistic {
     private byte sum;
     private int count;
 
-    public Int8StatisticImpl(Supplier<byte[]> dataSupplier, byte tombstone) {
-        this.dataSupplier = dataSupplier;
+    public Int8StatisticImpl(byte[] data, byte tombstone) {
+        this.data = data;
         this.tombstone = tombstone;
 
         this.firstIndex = -1;
@@ -48,13 +46,13 @@ public class Int8StatisticImpl implements Int8Statistic {
         if (newValue < min) {
             min = newValue;
         } else if (min == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             min = Int8VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
         }
         if (newValue > max) {
             max = newValue;
         } else if (max == oldValue) {
-            var data = dataSupplier.get();
+            var data = this.data;
             max = Int8VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
         }
     }
@@ -88,11 +86,11 @@ public class Int8StatisticImpl implements Int8Statistic {
             lastIndex = -1;
             lastValue = tombstone;
         } else if (firstIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             firstIndex = Int8VectorUtils.indexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             firstValue = data[firstIndex];
         } else if (lastIndex == position) {
-            var data = dataSupplier.get();
+            var data = this.data;
             lastIndex = Int8VectorUtils.lastIndexOfAnother(data, tombstone, firstIndex, lastIndex + 1);
             lastValue = data[lastIndex];
         }
@@ -101,7 +99,7 @@ public class Int8StatisticImpl implements Int8Statistic {
             if (firstIndex == -1) {
                 min = Byte.MAX_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 min = Int8VectorUtils.min(data, tombstone, firstIndex, lastIndex + 1);
             }
         }
@@ -109,7 +107,7 @@ public class Int8StatisticImpl implements Int8Statistic {
             if (firstIndex == -1) {
                 max = Byte.MIN_VALUE;
             } else {
-                var data = dataSupplier.get();
+                var data = this.data;
                 max = Int8VectorUtils.max(data, tombstone, firstIndex, lastIndex + 1);
             }
         }
