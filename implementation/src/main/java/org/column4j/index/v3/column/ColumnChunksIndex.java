@@ -1,36 +1,33 @@
-package org.column4j.index.temporal.meta;
+package org.column4j.index.v3.column;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Arrays;
 
-@NotThreadSafe
-public class ColumnMeta {
+
+public class ColumnChunksIndex {
 
     private static final int DEFAULT_CAPACITY = 10;
-    public final int columnId;
 
 
-    private long[] chunkOffsets;
-    private int[] chunkCapacities;
+    private int[] chunkOffsets;
+    private final int chunkCapacity;
     private int[] chunkIds;
     private int size = 0;
-    private int linearThreshold = 100;
+    private int linearThreshold = 20;
 
-    public ColumnMeta(int columnId) {
-        this(columnId, DEFAULT_CAPACITY);
+    public ColumnChunksIndex(int chunkSize) {
+        this(chunkSize, DEFAULT_CAPACITY);
     }
 
-    public ColumnMeta(int columnId, int initialCapacity) {
-        this.columnId = columnId;
-        chunkOffsets = new long[initialCapacity];
+    public ColumnChunksIndex(int chunkSize, int initialCapacity) {
+        chunkOffsets = new int[initialCapacity];
         chunkIds = new int[initialCapacity];
-        chunkCapacities = new int[initialCapacity];
+        chunkCapacity = chunkSize;
     }
 
 
-    public boolean addChunk(int id, long offset, int capacity) {
+    public boolean addChunk(int id, int offset) {
         ensureCapacity();
         int insertPoint = size;
         if (size > 0 && chunkOffsets[size - 1] > offset) { // broken offsets order
@@ -43,7 +40,6 @@ public class ColumnMeta {
         }
         chunkIds[insertPoint] = id;
         chunkOffsets[insertPoint] = offset;
-        chunkCapacities[insertPoint] = capacity;
         size++;
 
         return true;
@@ -64,14 +60,14 @@ public class ColumnMeta {
      * @return array of length 2 with start and end indices of chunkIds array or null in case of empty search result
      */
     @Nullable
-    public int[] searchInterval(long startOffset, long endOffset) {
+    public int[] searchInterval(int startOffset, int endOffset) {
         if (size == 0) {
             return null;
         }
         if (endOffset < startOffset) {
             return null;
         }
-        if (startOffset >= (chunkOffsets[size - 1] + chunkCapacities[size - 1]) || endOffset < chunkOffsets[0]) { // out of bounds
+        if (startOffset >= (chunkOffsets[size - 1] + chunkCapacity) || endOffset < chunkOffsets[0]) { // out of bounds
             return null;
         }
         if (size > linearThreshold) {
@@ -82,11 +78,11 @@ public class ColumnMeta {
     }
 
     @Nonnull
-    private int[] searchLinear(long startOffset, long endOffset) {
+    private int[] searchLinear(int startOffset, int endOffset) {
         int i = 0;
         int start, end;
         // find first block for start
-        while (chunkOffsets[i] + chunkCapacities[i] < startOffset) {
+        while (chunkOffsets[i] + chunkCapacity < startOffset) {
             i++;
         }
         start = i;
@@ -98,7 +94,7 @@ public class ColumnMeta {
     }
 
     @Nonnull
-    private int[] searchBinary(long startOffset, long endOffset) {
+    private int[] searchBinary(int startOffset, int endOffset) {
         int i = 0;
         int start, end;
         start = Arrays.binarySearch(chunkOffsets, 0, size, startOffset);
@@ -106,7 +102,7 @@ public class ColumnMeta {
             start = ~start;
             if (start > 0
                     && chunkOffsets[start - 1] <= startOffset  // we fell into prev chunk
-                    && startOffset <= (chunkOffsets[start - 1] + chunkCapacities[start - 1])) {
+                    && startOffset <= (chunkOffsets[start - 1] + chunkCapacity)) {
                 start--;
             }
         }
@@ -126,15 +122,12 @@ public class ColumnMeta {
     private void ensureCapacity() {
         if (size == chunkIds.length) {
             int newSize = chunkIds.length * 2;
-            long[] cpyOffsets = new long[newSize];
+            int[] cpyOffsets = new int[newSize];
             int[] cpyChunks = new int[newSize];
-            int[] cpyCap = new int[newSize];
             System.arraycopy(chunkOffsets, 0, cpyOffsets, 0, chunkOffsets.length);
             System.arraycopy(chunkIds, 0, cpyChunks, 0, chunkIds.length);
-            System.arraycopy(chunkCapacities, 0, cpyCap, 0, chunkCapacities.length);
             chunkIds = cpyChunks;
             chunkOffsets = cpyOffsets;
-            chunkCapacities = cpyCap;
         }
     }
 
@@ -142,7 +135,6 @@ public class ColumnMeta {
         for (int i = size; i > idx; i--) {
             chunkOffsets[i] = chunkOffsets[i-1];
             chunkIds[i] = chunkIds[i-1];
-            chunkCapacities[i] = chunkCapacities[i-1];
         }
     }
 

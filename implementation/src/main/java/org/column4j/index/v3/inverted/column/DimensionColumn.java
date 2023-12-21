@@ -1,5 +1,7 @@
-package org.column4j.index.temporal.column;
+package org.column4j.index.v3.inverted.column;
 
+
+import org.roaringbitmap.RoaringBitmap;
 
 import javax.annotation.Nullable;
 
@@ -22,7 +24,7 @@ public interface DimensionColumn {
      * @return search result or null
      */
     @Nullable
-    int[] lookup(CharSequence dimValue);
+    RoaringBitmap lookup(CharSequence dimValue);
 
 
 
