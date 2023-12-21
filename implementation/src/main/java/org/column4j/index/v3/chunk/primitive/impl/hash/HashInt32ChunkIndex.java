@@ -1,16 +1,16 @@
 package org.column4j.index.v3.chunk.primitive.impl.hash;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.column4j.index.v3.chunk.primitive.mutable.MutableInt32ChunkIndex;
-import org.eclipse.collections.api.map.primitive.MutableIntObjectMap;
-import org.eclipse.collections.api.set.primitive.MutableIntSet;
-import org.eclipse.collections.impl.map.mutable.primitive.IntObjectHashMap;
-import org.eclipse.collections.impl.set.mutable.primitive.IntHashSet;
 
 import javax.annotation.Nullable;
 
 public class HashInt32ChunkIndex extends HashChunkIndex implements MutableInt32ChunkIndex {
 
-    MutableIntObjectMap<MutableIntSet> hashMap = new IntObjectHashMap<>();
+    Int2ObjectMap<IntSet> hashMap = new Int2ObjectOpenHashMap<>();
 
     @Override
     public boolean contains(int value) {
@@ -24,14 +24,14 @@ public class HashInt32ChunkIndex extends HashChunkIndex implements MutableInt32C
         if (set == null) {
             return null;
         }
-        return set.toArray();
+        return set.toArray(new int[0]);
     }
 
     @Override
     public void insertRecord(int offset, int value) {
         var set = hashMap.get(value);
         if (set == null) {
-            set = new IntHashSet();
+            set = new IntOpenHashSet();
             hashMap.put(value, set);
         }
         set.add(offset);

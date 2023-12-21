@@ -1,8 +1,7 @@
 package org.column4j.index.v3.chunk.primitive.impl.skip;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 import org.column4j.index.v3.chunk.primitive.mutable.MutableInt16ChunkIndex;
-import org.eclipse.collections.api.list.primitive.MutableIntList;
-import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
 import javax.annotation.Nullable;
 
@@ -66,7 +65,7 @@ public class SkipInt16ChunkIndex extends SkipChunkIndex implements MutableInt16C
     @Nullable
     @Override
     public int[] lookupValues(short value) {
-        MutableIntList res = new IntArrayList();
+        IntArrayList res = new IntArrayList();
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
                 for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
@@ -76,7 +75,7 @@ public class SkipInt16ChunkIndex extends SkipChunkIndex implements MutableInt16C
                 }
             }
         }
-        return res.isEmpty() ? null : res.toArray();
+        return res.isEmpty() ? null : res.toArray(new int[0]);
     }
 
     @Override

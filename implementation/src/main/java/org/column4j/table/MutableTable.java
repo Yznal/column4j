@@ -1,5 +1,8 @@
 package org.column4j.table;
 
+import org.column4j.column.ColumnType;
+import org.column4j.column.mutable.MutableColumn;
+
 /**
  * @author sibmaks
  * @since 0.0.1
@@ -188,4 +191,19 @@ public interface MutableTable extends Table {
      * @param value value to write
      */
     void writeString(int columnIndex, int position, String value);
+
+    /**
+     * Creates new column in table
+     * @param name column name
+     * @param type column type
+     * @return index of created column, or -1 in case of failure
+     */
+    int createColumn(CharSequence name, ColumnType type);
+
+    /**
+     * Retrievs column from storage by index
+     * @param colIdx
+     * @return
+     */
+    MutableColumn<?, ?> getColumn(int colIdx);
 }

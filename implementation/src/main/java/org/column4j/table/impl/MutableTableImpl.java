@@ -1,11 +1,17 @@
 package org.column4j.table.impl;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import org.column4j.column.ColumnType;
+import org.column4j.column.impl.mutable.StringMutableColumnImpl;
+import org.column4j.column.impl.mutable.primitive.*;
 import org.column4j.column.mutable.MutableColumn;
 import org.column4j.column.mutable.StringMutableColumn;
 import org.column4j.column.mutable.primitive.*;
 import org.column4j.table.MutableTable;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
+import java.util.ArrayList;
 import java.util.SequencedMap;
 
 /**
@@ -13,18 +19,27 @@ import java.util.SequencedMap;
  * @since 0.0.1
  */
 public class MutableTableImpl implements MutableTable {
-    private final ObjectIntHashMap<String> columnNameIndexes;
-    private final MutableColumn<?, ?>[] mutableColumns;
+
+    private final Object2IntMap<CharSequence> columnNameIndexes;
+    private final ArrayList<MutableColumn<?, ?>> mutableColumns;
+    private int chunkSize;
 
     public MutableTableImpl(SequencedMap<String, MutableColumn<?, ?>> mutableColumns) {
-        this.mutableColumns = new MutableColumn[mutableColumns.size()];
-        this.columnNameIndexes = new ObjectIntHashMap<String>(mutableColumns.size());
+        this.mutableColumns = new ArrayList<>(mutableColumns.size()*2);
+        this.columnNameIndexes = new Object2IntOpenHashMap<>(mutableColumns.size(), 0.99f);
+
         var index = 0;
         for (var entry : mutableColumns.entrySet()) {
-            this.mutableColumns[index] = entry.getValue();
+            this.mutableColumns.add(index, entry.getValue());
             this.columnNameIndexes.put(entry.getKey(), index);
             index++;
         }
+    }
+
+    public MutableTableImpl(int columnChunkSize) {
+        this.mutableColumns = new ArrayList<>();
+        this.columnNameIndexes = new Object2IntOpenHashMap<>();
+        this.chunkSize = columnChunkSize;
     }
 
     @Override
@@ -67,6 +82,23 @@ public class MutableTableImpl implements MutableTable {
     public void writeString(int columnIndex, int position, String value) {
         var mutableColumn = getTypedColumn(columnIndex, StringMutableColumn.class);
         mutableColumn.write(position, value);
+    }
+
+    @Override
+    public int createColumn(CharSequence name, ColumnType type) {
+        var existingColumn = columnNameIndexes.get(name);
+        if (existingColumn != null) {
+            return -1;
+        }
+        int nextIdx = mutableColumns.size();
+        mutableColumns.add(createTypedColumn(type));
+        columnNameIndexes.put(name, nextIdx);
+        return nextIdx;
+    }
+
+    @Override
+    public MutableColumn<?, ?> getColumn(int colIdx) {
+        return mutableColumns.get(colIdx);
     }
 
     @Override
@@ -140,6 +172,19 @@ public class MutableTableImpl implements MutableTable {
         mutableColumn.readByIndexes(from, to, buffer);
     }
 
+    private MutableColumn<?, ?> createTypedColumn(ColumnType type) {
+        return switch (type) {
+            case FLOAT64 -> new Float64MutableColumnImpl(chunkSize, Double.MAX_VALUE);
+            case FLOAT32 -> new Float32MutableColumnImpl(chunkSize, Float.MAX_VALUE);
+            case INT64 -> new Int64MutableColumnImpl(chunkSize, Long.MAX_VALUE);
+            case INT32 -> new Int32MutableColumnImpl(chunkSize, Integer.MAX_VALUE);
+            case INT16 -> new Int16MutableColumnImpl(chunkSize, Short.MAX_VALUE);
+            case INT8 -> new Int8MutableColumnImpl(chunkSize, Byte.MAX_VALUE);
+            case BOOL -> throw new UnsupportedOperationException("Bool type columns not supported");
+            case STRING -> new StringMutableColumnImpl(chunkSize, null);
+        };
+    }
+
     @SuppressWarnings("unchecked")
     private <T> T getTypedColumn(int columnIndex, Class<T> columnType) {
         var mutableColumn = getMutableColumn(columnIndex);
@@ -151,9 +196,10 @@ public class MutableTableImpl implements MutableTable {
         }
     }
 
+
     @SuppressWarnings("unchecked")
     protected <X> MutableColumn<X, ?> getMutableColumn(int columnIndex) {
-        if (columnIndex < 0 || columnIndex >= mutableColumns.length) {
+        if (columnIndex < 0 || columnIndex >= mutableColumns.size()) {
             throw new IllegalArgumentException("Column with index %d doesn't exists".formatted(columnIndex));
         }
         var mutableColumn = mutableColumns[columnIndex];

@@ -1,15 +1,15 @@
 package org.column4j.index.v3.chunk.primitive.impl.hash;
 
+import it.unimi.dsi.fastutil.floats.Float2ObjectMap;
+import it.unimi.dsi.fastutil.floats.Float2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import org.column4j.index.v3.chunk.primitive.mutable.MutableFloat32ChunkIndex;
-import org.eclipse.collections.api.map.primitive.MutableFloatObjectMap;
-import org.eclipse.collections.api.set.primitive.MutableIntSet;
-import org.eclipse.collections.impl.map.mutable.primitive.FloatObjectHashMap;
-import org.eclipse.collections.impl.set.mutable.primitive.IntHashSet;
 
 import javax.annotation.Nullable;
 
 public class HashFloat32ChunkIndex extends HashChunkIndex implements MutableFloat32ChunkIndex {
-    MutableFloatObjectMap<MutableIntSet> hashMap = new FloatObjectHashMap<>();
+    Float2ObjectMap<IntSet> hashMap =  new Float2ObjectOpenHashMap<>();
 
     @Override
     public boolean contains(float value) {
@@ -23,14 +23,14 @@ public class HashFloat32ChunkIndex extends HashChunkIndex implements MutableFloa
         if (set == null) {
             return null;
         }
-        return set.toArray();
+        return set.toArray(new int[0]);
     }
 
     @Override
     public void insertRecord(int offset, float value) {
         var set = hashMap.get(value);
         if (set == null) {
-            set = new IntHashSet();
+            set = new IntOpenHashSet();
             hashMap.put(value, set);
         }
         set.add(offset);

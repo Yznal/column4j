@@ -1,6 +1,6 @@
 package org.column4j.index.v3.chunk.primitive.impl.sorted;
 
-import org.column4j.index.v3.chunk.BinarySearch;
+import org.column4j.utils.BinarySearch;
 import org.column4j.index.v3.chunk.primitive.Float64ChunkIndex;
 
 

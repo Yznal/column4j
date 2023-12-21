@@ -1,5 +1,6 @@
 package org.column4j.table.impl;
 
+import org.column4j.column.ColumnType;
 import org.column4j.column.impl.mutable.StringMutableColumnImpl;
 import org.column4j.column.impl.mutable.primitive.Float32MutableColumnImpl;
 import org.column4j.column.impl.mutable.primitive.Int32MutableColumnImpl;
@@ -16,6 +17,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author sibmaks
@@ -87,6 +89,18 @@ class MutableTableImplTest {
             assertEquals(host, columnHost.get(cursor + index));
             assertEquals(host, mutableTable.getString(2, cursor + index));
         }
+
+        assertEquals(10, columnUsersOnline.getChunks().size());
+        assertEquals(20, columnCpuUsage.getChunks().size());
+        assertEquals(1280, columnHost.getChunks().size());
+
+        int error = mutableTable.createColumn("users", ColumnType.INT32);
+        assertEquals(-1, error);
+        int createdColIndex = mutableTable.createColumn ("added", ColumnType.FLOAT64);
+        assertNotEquals(-1, createdColIndex);
+
+        MutableColumn<?, ?> retrieved = mutableTable.getColumn(createdColIndex);
+        assertEquals(ColumnType.FLOAT64, retrieved.type());
     }
 
 
