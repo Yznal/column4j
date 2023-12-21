@@ -17,29 +17,29 @@ public class SkipInt64ChunkIndex extends SkipChunkIndex implements MutableInt64C
         super(segmentSize);
         this.dataRef = data;
 
-    int segmentCount = data.length % segmentSize == 0
-            ? data.length / segmentSize
-            : data.length / segmentSize + 1;
-    int segmentIdx = segmentCount - 1;
-    this.segmentsMin = new long[segmentCount];
-    this.segmentsMax = new long[segmentCount];
-    long min = Long.MAX_VALUE;
-    long max = Long.MIN_VALUE;
-    for (int i = data.length - 1; i >= 0 ; i--) {;
-        if (data[i] > max) {
-            max = data[i];
+        int segmentCount = data.length % segmentSize == 0
+                ? data.length / segmentSize
+                : data.length / segmentSize + 1;
+        int segmentIdx = segmentCount - 1;
+        this.segmentsMin = new long[segmentCount];
+        this.segmentsMax = new long[segmentCount];
+        long min = Long.MAX_VALUE;
+        long max = Long.MIN_VALUE;
+        for (int i = data.length - 1; i >= 0 ; i--) {;
+            if (data[i] > max) {
+                max = data[i];
+            }
+            if (data[i] < min) {
+                min = data[i];
+            }
+            if (i % segmentSize == 0) {
+                segmentsMin[segmentIdx] = min;
+                segmentsMax[segmentIdx] = max;
+                min = Long.MAX_VALUE;
+                max = Long.MIN_VALUE;
+                segmentIdx--;
+            }
         }
-        if (data[i] < min) {
-            min = data[i];
-        }
-        if (i % segmentSize == 0) {
-            segmentsMin[segmentIdx] = min;
-            segmentsMax[segmentIdx] = max;
-            min = Long.MAX_VALUE;
-            max = Long.MIN_VALUE;
-            segmentIdx--;
-        }
-    }
     }
 
     public SkipInt64ChunkIndex(long[] data) {
