@@ -37,8 +37,9 @@ public class StorageImpl implements Storage {
     public MutableColumn<?, ?> createColumn(Collection<Dimension> dimensions, CharSequence name, ColumnType type) {
         int dataColumnIndex = dataStore.createColumn(name, type);
         if (dataColumnIndex == -1) {
-            throw new IllegalArgumentException("Column %s already existis".formatted(name));
+            throw new IllegalArgumentException("Column %s already exists".formatted(name));
         }
+        // we have no ability to distinguish 2 identical dimension tuples yet
         dimensionsInvertedIndex.insertValue(dimensions, dataColumnIndex);
         return dataStore.getColumn(dataColumnIndex);
     }

@@ -9,7 +9,6 @@ import org.column4j.column.mutable.MutableColumn;
 import org.column4j.column.mutable.StringMutableColumn;
 import org.column4j.column.mutable.primitive.*;
 import org.column4j.table.MutableTable;
-import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
 import java.util.ArrayList;
 import java.util.SequencedMap;
@@ -86,8 +85,8 @@ public class MutableTableImpl implements MutableTable {
 
     @Override
     public int createColumn(CharSequence name, ColumnType type) {
-        var existingColumn = columnNameIndexes.get(name);
-        if (existingColumn != null) {
+        var existingColumn = columnNameIndexes.getOrDefault(name, -1);
+        if (existingColumn != -1) {
             return -1;
         }
         int nextIdx = mutableColumns.size();
@@ -103,7 +102,7 @@ public class MutableTableImpl implements MutableTable {
 
     @Override
     public int getColumnIndex(String columnName) {
-        return columnNameIndexes.getIfAbsent(columnName, -1);
+        return columnNameIndexes.getOrDefault(columnName, -1);
     }
 
     @Override
@@ -202,7 +201,7 @@ public class MutableTableImpl implements MutableTable {
         if (columnIndex < 0 || columnIndex >= mutableColumns.size()) {
             throw new IllegalArgumentException("Column with index %d doesn't exists".formatted(columnIndex));
         }
-        var mutableColumn = mutableColumns[columnIndex];
+        var mutableColumn = mutableColumns.get(columnIndex);
         return (MutableColumn<X, ?>) mutableColumn;
     }
 }
