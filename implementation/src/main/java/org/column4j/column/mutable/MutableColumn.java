@@ -24,4 +24,9 @@ public interface MutableColumn<T, S extends Statistic> extends Column<T, S> {
      * @return instance of mutable chunk
      */
     MutableColumnChunk<T, S> getChunk(int index);
+
+    /**
+     * @return last modified position with not tombstone value
+     */
+    int getCursor();
 }

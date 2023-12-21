@@ -308,4 +308,10 @@ public interface Table {
      * @param buffer      buffer to write values
      */
     <T> void readByIndexes(int columnIndex, int from, int to, T buffer);
+
+    /**
+     * @return last inserted row cursor
+     */
+    int getCursor();
+
 }

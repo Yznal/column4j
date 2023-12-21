@@ -57,6 +57,15 @@ public class Int8MutableColumnImpl implements Int8MutableColumn {
     }
 
     @Override
+    public int getCursor() {
+        return chunks.stream()
+                .map(ColumnChunk::getStatistic)
+                .mapToInt(Statistic::getLastIndex)
+                .max()
+                .orElse(-1);
+    }
+
+    @Override
     public void write(int position, byte value) {
         var chunkIndex = position / maxChunkSize;
         var chunkPosition = position % maxChunkSize;

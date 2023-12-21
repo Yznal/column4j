@@ -6,6 +6,7 @@ import org.column4j.column.mutable.primitive.*;
 import org.column4j.table.MutableTable;
 import org.eclipse.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 
+import java.util.Arrays;
 import java.util.SequencedMap;
 
 /**
@@ -158,5 +159,13 @@ public class MutableTableImpl implements MutableTable {
         }
         var mutableColumn = mutableColumns[columnIndex];
         return (MutableColumn<X, ?>) mutableColumn;
+    }
+
+    @Override
+    public int getCursor() {
+        return Arrays.stream(mutableColumns)
+                .mapToInt(MutableColumn::getCursor)
+                .max()
+                .orElse(-1);
     }
 }

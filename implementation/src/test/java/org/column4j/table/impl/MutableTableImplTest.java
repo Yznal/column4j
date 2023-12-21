@@ -9,10 +9,7 @@ import org.eclipse.collections.impl.list.mutable.primitive.FloatArrayList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -203,7 +200,7 @@ class MutableTableImplTest {
                 mutableTable.writeFloat32(1, cursor + index, cpuUsage);
                 cpuUsageValues++;
             }
-            if (host != hostTombstone) {
+            if (!Objects.equals(host, hostTombstone)) {
                 mutableTable.writeString(2, cursor + index, host);
                 hostValues++;
             }
