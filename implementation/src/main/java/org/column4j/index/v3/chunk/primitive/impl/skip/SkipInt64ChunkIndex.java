@@ -1,19 +1,19 @@
 package org.column4j.index.v3.chunk.primitive.impl.skip;
 
-import org.column4j.index.v3.chunk.primitive.mutable.MutableInt8ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.mutable.MutableInt64ChunkIndex;
 import org.eclipse.collections.api.list.primitive.MutableIntList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
 import javax.annotation.Nullable;
 
-public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkIndex {
+public class SkipInt64ChunkIndex extends SkipChunkIndex implements MutableInt64ChunkIndex {
 
-    private final byte[] dataRef;
+    private final long[] dataRef;
 
-    private final byte[] segmentsMin;
-    private final byte[] segmentsMax;
+    private final long[] segmentsMin;
+    private final long[] segmentsMax;
 
-    public Int8SkipIndex(byte[] data, int segmentSize) {
+    public SkipInt64ChunkIndex(long[] data, int segmentSize) {
         super(segmentSize);
         this.dataRef = data;
 
@@ -21,10 +21,10 @@ public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkInd
                 ? data.length / segmentSize
                 : data.length / segmentSize + 1;
         int segmentIdx = segmentCount - 1;
-        this.segmentsMin = new byte[segmentCount];
-        this.segmentsMax = new byte[segmentCount];
-        byte min = Byte.MAX_VALUE;
-        byte max = Byte.MIN_VALUE;
+        this.segmentsMin = new long[segmentCount];
+        this.segmentsMax = new long[segmentCount];
+        long min = Long.MAX_VALUE;
+        long max = Long.MIN_VALUE;
         for (int i = data.length - 1; i >= 0 ; i--) {;
             if (data[i] > max) {
                 max = data[i];
@@ -35,24 +35,25 @@ public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkInd
             if (i % segmentSize == 0) {
                 segmentsMin[segmentIdx] = min;
                 segmentsMax[segmentIdx] = max;
-                min = Byte.MAX_VALUE;
-                max = Byte.MIN_VALUE;
+                min = Long.MAX_VALUE;
+                max = Long.MIN_VALUE;
+                segmentSize--;
             }
         }
     }
 
-    public Int8SkipIndex(byte[] data) {
+    public SkipInt64ChunkIndex(long[] data) {
         this(data, DEFAULT_SEGMENT_SIZE);
     }
 
     @Override
-    public boolean contains(byte value) {
+    public boolean contains(long value) {
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
                 if (value == segmentsMin[s] || value == segmentsMax[s]){
                     return true;
                 }
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         return true;
                     }
@@ -64,11 +65,11 @@ public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkInd
 
     @Nullable
     @Override
-    public int[] lookupValues(byte value) {
+    public int[] lookupValues(long value) {
         MutableIntList res = new IntArrayList();
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         res.add(i);
                     }
@@ -79,7 +80,7 @@ public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkInd
     }
 
     @Override
-    public void insertRecord(int offset, byte value) {
+    public void insertRecord(int offset, long value) {
         int segment = offset / segmentSize;
         if (value > segmentsMax[segment]) {
             segmentsMax[segment] = value;
@@ -89,3 +90,4 @@ public class Int8SkipIndex extends SkipChunkIndex implements MutableInt8ChunkInd
         }
     }
 }
+

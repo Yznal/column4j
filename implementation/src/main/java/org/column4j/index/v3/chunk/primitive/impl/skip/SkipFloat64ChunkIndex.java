@@ -1,19 +1,19 @@
 package org.column4j.index.v3.chunk.primitive.impl.skip;
 
-import org.column4j.index.v3.chunk.primitive.mutable.MutableInt16ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.mutable.MutableFloat64ChunkIndex;
 import org.eclipse.collections.api.list.primitive.MutableIntList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
 import javax.annotation.Nullable;
 
-public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkIndex {
+public class SkipFloat64ChunkIndex extends SkipChunkIndex implements MutableFloat64ChunkIndex {
 
-    private final short[] dataRef;
+    private final double[] dataRef;
 
-    private final short[] segmentsMin;
-    private final short[] segmentsMax;
+    private final double[] segmentsMin;
+    private final double[] segmentsMax;
 
-    public Int16SkipIndex(short[] data, int segmentSize) {
+    public SkipFloat64ChunkIndex(double[] data, int segmentSize) {
         super(segmentSize);
         this.dataRef = data;
 
@@ -21,10 +21,10 @@ public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkI
                 ? data.length / segmentSize
                 : data.length / segmentSize + 1;
         int segmentIdx = segmentCount - 1;
-        this.segmentsMin = new short[segmentCount];
-        this.segmentsMax = new short[segmentCount];
-        short min = Short.MAX_VALUE;
-        short max = Short.MIN_VALUE;
+        this.segmentsMin = new double[segmentCount];
+        this.segmentsMax = new double[segmentCount];
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
         for (int i = data.length - 1; i >= 0 ; i--) {;
             if (data[i] > max) {
                 max = data[i];
@@ -35,24 +35,25 @@ public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkI
             if (i % segmentSize == 0) {
                 segmentsMin[segmentIdx] = min;
                 segmentsMax[segmentIdx] = max;
-                min = Short.MAX_VALUE;
-                max = Short.MIN_VALUE;
+                min = Double.MAX_VALUE;
+                max = -Double.MAX_VALUE;
+                segmentIdx--;
             }
         }
     }
 
-    public Int16SkipIndex(short[] data) {
+    public SkipFloat64ChunkIndex(double[] data) {
         this(data, DEFAULT_SEGMENT_SIZE);
     }
 
     @Override
-    public boolean contains(short value) {
+    public boolean contains(double value) {
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
                 if (value == segmentsMin[s] || value == segmentsMax[s]){
                     return true;
                 }
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         return true;
                     }
@@ -64,11 +65,11 @@ public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkI
 
     @Nullable
     @Override
-    public int[] lookupValues(short value) {
+    public int[] lookupValues(double value) {
         MutableIntList res = new IntArrayList();
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         res.add(i);
                     }
@@ -79,7 +80,7 @@ public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkI
     }
 
     @Override
-    public void insertRecord(int offset, short value) {
+    public void insertRecord(int offset, double value) {
         int segment = offset / segmentSize;
         if (value > segmentsMax[segment]) {
             segmentsMax[segment] = value;
@@ -89,3 +90,4 @@ public class Int16SkipIndex extends SkipChunkIndex implements MutableInt16ChunkI
         }
     }
 }
+

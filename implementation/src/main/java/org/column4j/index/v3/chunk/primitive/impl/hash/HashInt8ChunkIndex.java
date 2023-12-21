@@ -31,6 +31,7 @@ public class HashInt8ChunkIndex extends HashChunkIndex implements MutableInt8Chu
         var set = hashMap.get(value);
         if (set == null) {
             set = new IntHashSet();
+            hashMap.put(value, set);
         }
         set.add(offset);
     }

@@ -1,20 +1,19 @@
 package org.column4j.index.v3.chunk.primitive.impl.skip;
 
-import org.column4j.index.v3.chunk.primitive.mutable.MutableFloat32ChunkIndex;
-import org.column4j.index.v3.chunk.primitive.mutable.MutableFloat64ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.mutable.MutableInt32ChunkIndex;
 import org.eclipse.collections.api.list.primitive.MutableIntList;
 import org.eclipse.collections.impl.list.mutable.primitive.IntArrayList;
 
 import javax.annotation.Nullable;
 
-public class Float32SkipIndex extends SkipChunkIndex implements MutableFloat32ChunkIndex {
+public class SkipInt32ChunkIndex extends SkipChunkIndex implements MutableInt32ChunkIndex {
 
-    private final float[] dataRef;
+    private final int[] dataRef;
 
-    private final float[] segmentsMin;
-    private final float[] segmentsMax;
+    private final int[] segmentsMin;
+    private final int[] segmentsMax;
 
-    public Float32SkipIndex(float[] data, int segmentSize) {
+    public SkipInt32ChunkIndex(int[] data, int segmentSize) {
         super(segmentSize);
         this.dataRef = data;
 
@@ -22,10 +21,10 @@ public class Float32SkipIndex extends SkipChunkIndex implements MutableFloat32Ch
                 ? data.length / segmentSize
                 : data.length / segmentSize + 1;
         int segmentIdx = segmentCount - 1;
-        this.segmentsMin = new float[segmentCount];
-        this.segmentsMax = new float[segmentCount];
-        float min = Float.MAX_VALUE;
-        float max = -Float.MAX_VALUE;
+        this.segmentsMin = new int[segmentCount];
+        this.segmentsMax = new int[segmentCount];
+        int min = Integer.MAX_VALUE;
+        int max = Integer.MIN_VALUE;
         for (int i = data.length - 1; i >= 0 ; i--) {;
             if (data[i] > max) {
                 max = data[i];
@@ -36,24 +35,25 @@ public class Float32SkipIndex extends SkipChunkIndex implements MutableFloat32Ch
             if (i % segmentSize == 0) {
                 segmentsMin[segmentIdx] = min;
                 segmentsMax[segmentIdx] = max;
-                min = Float.MAX_VALUE;
-                max = -Float.MAX_VALUE;
+                min = Integer.MAX_VALUE;
+                max = Integer.MIN_VALUE;
+                segmentIdx--;
             }
         }
     }
 
-    public Float32SkipIndex(float[] data) {
+    public SkipInt32ChunkIndex(int[] data) {
         this(data, DEFAULT_SEGMENT_SIZE);
     }
 
     @Override
-    public boolean contains(float value) {
+    public boolean contains(int value) {
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
                 if (value == segmentsMin[s] || value == segmentsMax[s]){
                     return true;
                 }
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         return true;
                     }
@@ -65,11 +65,11 @@ public class Float32SkipIndex extends SkipChunkIndex implements MutableFloat32Ch
 
     @Nullable
     @Override
-    public int[] lookupValues(float value) {
+    public int[] lookupValues(int value) {
         MutableIntList res = new IntArrayList();
         for (int s = 0; s < segmentsMin.length; s++) {
             if (value >= segmentsMin[s] && value <= segmentsMax[s]) {
-                for (int i = s*segmentSize; i < s*segmentSize + 1 && i < dataRef.length; i++) {
+                for (int i = s*segmentSize; i < (s + 1)*segmentSize && i < dataRef.length; i++) {
                     if (dataRef[i] == value) {
                         res.add(i);
                     }
@@ -80,7 +80,7 @@ public class Float32SkipIndex extends SkipChunkIndex implements MutableFloat32Ch
     }
 
     @Override
-    public void insertRecord(int offset, float value) {
+    public void insertRecord(int offset, int value) {
         int segment = offset / segmentSize;
         if (value > segmentsMax[segment]) {
             segmentsMax[segment] = value;

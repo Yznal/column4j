@@ -32,6 +32,7 @@ public class HashInt32ChunkIndex extends HashChunkIndex implements MutableInt32C
         var set = hashMap.get(value);
         if (set == null) {
             set = new IntHashSet();
+            hashMap.put(value, set);
         }
         set.add(offset);
     }

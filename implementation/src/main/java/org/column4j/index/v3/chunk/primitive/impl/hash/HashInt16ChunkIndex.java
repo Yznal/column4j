@@ -31,6 +31,7 @@ public class HashInt16ChunkIndex extends HashChunkIndex implements MutableInt16C
         var set = hashMap.get(value);
         if (set == null) {
             set = new IntHashSet();
+            hashMap.put(value, set);
         }
         set.add(offset);
     }

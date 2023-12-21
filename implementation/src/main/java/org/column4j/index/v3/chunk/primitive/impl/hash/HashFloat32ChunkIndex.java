@@ -31,6 +31,7 @@ public class HashFloat32ChunkIndex extends HashChunkIndex implements MutableFloa
         var set = hashMap.get(value);
         if (set == null) {
             set = new IntHashSet();
+            hashMap.put(value, set);
         }
         set.add(offset);
     }
