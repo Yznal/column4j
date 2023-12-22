@@ -1,20 +1,19 @@
 package org.column4j.index.v3.column;
 
-import org.column4j.index.v3.column.ColumnChunksIndex;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ColumnChunksIndexTest {
+class TemporalChunksIndexTest {
 
-    ColumnChunksIndex testMeta;
+    TemporalChunksIndex testMeta;
 
 
     // [10,15)----[25,30)-----[40,45)------[92,97)
     @BeforeEach
     void setUp() {
-        testMeta = new ColumnChunksIndex(5, 8);
+        testMeta = new TemporalChunksIndex(5, 8);
         testMeta.addChunk(0 ,10);
         testMeta.addChunk(3 ,25);
         testMeta.addChunk(7 ,40);

@@ -1,9 +1,13 @@
 package org.column4j.index.v3.chunk.primitive.impl.hash;
 
+import org.column4j.index.v3.chunk.primitive.StringChunkIndex;
+import org.column4j.index.v3.chunk.primitive.impl.sorted.SortedStringChunkIndex;
 import org.column4j.index.v3.chunk.primitive.mutable.MutableInt32ChunkIndex;
+import org.column4j.index.v3.chunk.primitive.mutable.MutableStringChunkIndex;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +50,54 @@ class HashChunkIndexTest {
         assertEquals(4, repRes.length);
         for (int i : repRes) {
             assertEquals(testValueRepeated, testArr[i]);
+        }
+    }
+
+    @Test
+    void testStringIndex() {
+        int chunkIndexSegmentSize = 128;
+        String[] testChunkData = IntStream.rangeClosed(0, 1000)
+                .mapToObj(_ -> UUID.randomUUID().toString())
+                .toArray(String[]::new);
+
+        String testString = "test";
+        String testRepeatedString = "repeated";
+        String notPresentString = "i am not";
+        int randomIndex = rnd.nextInt(950);
+        testChunkData[randomIndex] = testString;
+        for (int i = randomIndex + 120; i < randomIndex + 124; i++) {
+            testChunkData[i % 1001] = testRepeatedString;
+        }
+        MutableStringChunkIndex index = new HashStringChunkIndex();
+        for (int i = 0; i < testChunkData.length; i++) {
+            index.insertRecord(i, testChunkData[i]);
+        }
+
+        assertEquals(1001, testChunkData.length);
+        assertTrue(index.contains(testString));
+        assertTrue(index.contains(testRepeatedString));
+        assertFalse(index.contains(notPresentString));
+        for (String s : testChunkData) {
+            assertTrue(index.contains(s));
+        }
+
+        int[] singleRes = index.lookupValues(testString);
+        assertNotNull(singleRes);
+        assertEquals(1, singleRes.length);
+        assertEquals(testString, testChunkData[singleRes[0]]);
+
+        int[] repeatedRes = index.lookupValues(testRepeatedString);
+        assertNotNull(repeatedRes);
+        assertEquals(4, repeatedRes.length);
+        for (int idx : repeatedRes) {
+            assertEquals(testRepeatedString, testChunkData[idx]);
+        }
+        for (String s : testChunkData) {
+            int[] found = index.lookupValues(s);
+            assertNotNull(found);
+            for (int idx : found) {
+                assertEquals(s, testChunkData[idx]);
+            }
         }
     }
 

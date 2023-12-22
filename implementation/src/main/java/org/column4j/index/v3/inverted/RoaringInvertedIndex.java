@@ -3,7 +3,7 @@ package org.column4j.index.v3.inverted;
 import org.column4j.index.Dimension;
 import org.column4j.index.InvertedIndex;
 import org.column4j.index.v3.inverted.column.DimensionColumn;
-import org.column4j.index.v3.inverted.column.TemporalDimensionColumn;
+import org.column4j.index.v3.inverted.column.DimensionColumnImpl;
 import org.roaringbitmap.RoaringBitmap;
 
 import javax.annotation.Nonnull;
@@ -70,7 +70,7 @@ public class RoaringInvertedIndex implements InvertedIndex {
         for (var dimension : dimensions) {
             DimensionColumn column = columns.get(dimension.dimensionName());
             if (column == null) {
-                column = new TemporalDimensionColumn();
+                column = new DimensionColumnImpl();
                 columns.put(dimension.dimensionName(), column);
             }
             column.storeColRecord(dimension.dimensionValue(), colId);
