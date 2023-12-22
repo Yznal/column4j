@@ -50,7 +50,7 @@ public class SortedStringChunkIndex extends SortedChunkIndex implements StringCh
         for (int i = 0; i < data.length; i++) {;
             offsets[i] = sorting[i].offset;
             if (i % segmentSize == 0) {
-                segments[segmentIdx++] = safeHash(data[offsets[i]]);
+                segments[segmentIdx++] = dictEncoding.getInt((data[offsets[i]]));
             }
         }
         return new SortedStringChunkIndex(segmentSize, segments, data, dictEncoding, offsets);
@@ -126,7 +126,7 @@ public class SortedStringChunkIndex extends SortedChunkIndex implements StringCh
     }
 
     private int searchRight(int idx, String value) {
-        while (idx < localOffsets.length - 1 && Objects.equals(dataRef[localOffsets[idx - 1]], value)) {
+        while (idx < localOffsets.length - 1 && Objects.equals(dataRef[localOffsets[idx + 1]], value)) {
             idx++;
         }
         return idx;

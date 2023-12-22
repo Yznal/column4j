@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TemporalDimensionColumn implements DimensionColumn {
+public class DimensionColumnImpl implements DimensionColumn {
 
     private final Map<CharSequence, RoaringBitmap> dataPointers = new HashMap<>();
 

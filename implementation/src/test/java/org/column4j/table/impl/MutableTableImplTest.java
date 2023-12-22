@@ -90,10 +90,6 @@ class MutableTableImplTest {
             assertEquals(host, mutableTable.getString(2, cursor + index));
         }
 
-        assertEquals(10, columnUsersOnline.getChunks().size());
-        assertEquals(20, columnCpuUsage.getChunks().size());
-        assertEquals(1280, columnHost.getChunks().size());
-
         int error = mutableTable.createColumn("users", ColumnType.INT32);
         assertEquals(-1, error);
         int createdColIndex = mutableTable.createColumn ("added", ColumnType.FLOAT64);

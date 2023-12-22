@@ -2,7 +2,6 @@ package org.column4j.index.v3.chunk.primitive.impl.sorted;
 
 import org.column4j.index.v3.chunk.primitive.Int32ChunkIndex;
 import org.column4j.index.v3.chunk.primitive.StringChunkIndex;
-import org.column4j.index.v3.chunk.primitive.impl.skip.SkipStringChunkIndex;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
