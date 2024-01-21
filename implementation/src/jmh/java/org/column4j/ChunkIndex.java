@@ -35,7 +35,7 @@ public class ChunkIndex {
     Take absent value as random from [1_000_000:2_000_000)
      */
     @Setup(Level.Iteration)
-    void setUp() {
+    public void setUp() {
         hashIndex = new HashInt32ChunkIndex();
         array = IntStream.range(0, arraySize)
                 .map(i -> {
@@ -57,25 +57,25 @@ public class ChunkIndex {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean hashIndexContainsExisting() {
+    public boolean hashIndexContainsExisting() {
         return hashIndex.contains(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean hashIndexContainsAbsent() {
+    public boolean hashIndexContainsAbsent() {
         return hashIndex.contains(absentElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] hashIndexGetExisting() {
+    public int[] hashIndexGetExisting() {
         return hashIndex.lookupValues(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] hashIndexGetAbsent() {
+    public int[] hashIndexGetAbsent() {
         return hashIndex.lookupValues(absentElement);
     }
 
@@ -83,25 +83,25 @@ public class ChunkIndex {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean skipIndexContainsExisting() {
+    public boolean skipIndexContainsExisting() {
         return skipIndex.contains(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean skipIndexContainsAbsent() {
+    public boolean skipIndexContainsAbsent() {
         return skipIndex.contains(absentElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] skipIndexGetExisting() {
+    public int[] skipIndexGetExisting() {
         return skipIndex.lookupValues(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] skipIndexGetAbsent() {
+    public int[] skipIndexGetAbsent() {
         return skipIndex.lookupValues(absentElement);
     }
 
@@ -109,25 +109,25 @@ public class ChunkIndex {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean sortedIndexContainsExisting() {
+    public boolean sortedIndexContainsExisting() {
         return sortedIndex.contains(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    boolean sortedIndexContainsAbsent() {
+    public boolean sortedIndexContainsAbsent() {
         return sortedIndex.contains(absentElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] sortedIndexGetExisting() {
+    public int[] sortedIndexGetExisting() {
         return sortedIndex.lookupValues(existingElement);
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    int[] sortedIndexGetAbsent() {
+    public int[] sortedIndexGetAbsent() {
         return sortedIndex.lookupValues(absentElement);
     }
 
