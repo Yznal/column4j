@@ -38,7 +38,7 @@ public class StringMutableColumnImpl implements StringMutableColumn {
 
     @Override
     public ColumnType type() {
-        return ColumnType.FLOAT32;
+        return ColumnType.STRING;
     }
 
     @Override
