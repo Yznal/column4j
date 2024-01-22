@@ -4,7 +4,6 @@ import org.column4j.column.chunk.mutable.StringMutableColumnChunk;
 import org.column4j.column.impl.statistic.StringStatisticImpl;
 import org.column4j.column.statistic.StringStatistic;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -12,26 +11,23 @@ import java.util.Objects;
  * @since 0.0.1
  */
 public class StringMutableColumnChunkImpl implements StringMutableColumnChunk {
-    private final int size;
-    private final String[] data;
+    private final StringStorage data;
     private final String tombstone;
     private final StringStatistic statistic;
 
     public StringMutableColumnChunkImpl(int size, String tombstone) {
-        this.size = size;
         this.tombstone = tombstone;
-        this.data = this.allocate();
+        this.data = new StringStorage(size, tombstone);
         this.statistic = new StringStatisticImpl(data, tombstone);
     }
 
     @Override
     public void write(int position, String value) {
-        var data = this.data;
-        var oldValue = data[position];
+        var oldValue = data.get(position);
         if (Objects.equals(oldValue, value)) {
             return;
         }
-        data[position] = value;
+        data.write(position, value);
         if (Objects.equals(oldValue, tombstone)) {
             statistic.onValueAdded(position, value);
         } else if (Objects.equals(value, tombstone)) {
@@ -43,7 +39,7 @@ public class StringMutableColumnChunkImpl implements StringMutableColumnChunk {
 
     @Override
     public String[] getData() {
-        return this.data;
+        return this.data.getData();
     }
 
     @Override
@@ -51,17 +47,8 @@ public class StringMutableColumnChunkImpl implements StringMutableColumnChunk {
         return statistic;
     }
 
-    private String[] allocate() {
-        var data = new String[size];
-        if (tombstone != null) {
-            Arrays.fill(data, tombstone);
-        }
-        return data;
-    }
-
     @Override
     public String get(int position) {
-        var data = this.data;
-        return data[position];
+        return data.get(position);
     }
 }
