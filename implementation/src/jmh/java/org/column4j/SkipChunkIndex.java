@@ -13,7 +13,7 @@ public class SkipChunkIndex {
 
     private static final Random generator = new Random(134);
 
-    @Param({"1000", "1024", "1000000", "1048576", "65000000", "67108864"})
+    @Param({"1000", "1000000", "10000000", "30000000", "60000000"})
     public int arraySize;
 
     @Param({"1024", "1048576"})
@@ -70,10 +70,6 @@ public class SkipChunkIndex {
     public int[] skipIndexGetAbsent() {
         return skipIndex.lookupValues(absentElement);
     }
-
-
-
-
 
 
 }

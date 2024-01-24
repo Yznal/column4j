@@ -30,6 +30,7 @@ class SkipChunkIndexTest {
         assertEquals(2053, testChunkData.length);
 
         Int32ChunkIndex index = new SkipInt32ChunkIndex(testChunkData, chunkIndexSegmentSize);
+        Int32ChunkIndex vIndex = new SkipInt32ChunkVIndex(testChunkData, chunkIndexSegmentSize);
 
         assertFalse(index.contains(nonexistentValue));
         assertNull(index.lookupValues(nonexistentValue));
@@ -44,6 +45,25 @@ class SkipChunkIndexTest {
         int[] repRes = index.lookupValues(testValueRepeated);
         assertEquals(4, repRes.length);
         for (int i : repRes) {
+            assertEquals(testValueRepeated, testChunkData[i]);
+        }
+
+
+        // vindex
+
+        assertFalse(vIndex.contains(nonexistentValue));
+        assertNull(vIndex.lookupValues(nonexistentValue));
+
+        assertTrue(vIndex.contains(testValue));
+        int[] resV = vIndex.lookupValues(testValue);
+        assertEquals(1, resV.length);
+        int foundValueV = testChunkData[resV[0]];
+        assertEquals(testValue, foundValueV);
+
+        assertTrue(vIndex.contains(testValueRepeated));
+        int[] repResV = vIndex.lookupValues(testValueRepeated);
+        assertEquals(4, repResV.length);
+        for (int i : repResV) {
             assertEquals(testValueRepeated, testChunkData[i]);
         }
     }
