@@ -23,10 +23,10 @@ public final class Int8VectorUtils {
      * @param tombstone ignored value
      * @param from      from index (inclusive)
      * @param to        to index (exclusive)
-     * @return maximum on array or {@link Integer#MIN_VALUE}
+     * @return maximum on array or {@link Byte#MIN_VALUE}
      */
     public static byte max(byte[] data, byte tombstone, int from, int to) {
-        var maxVector = ByteVector.broadcast(SPECIES_PREFERRED, Integer.MIN_VALUE);
+        var maxVector = ByteVector.broadcast(SPECIES_PREFERRED, Byte.MIN_VALUE);
         for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
             var nextVector = ByteVector.fromArray(SPECIES_PREFERRED, data, from);
             var tombstoneMask = nextVector.eq(tombstone).not();
@@ -53,7 +53,7 @@ public final class Int8VectorUtils {
      * @return minimum on array or {@link Integer#MAX_VALUE}
      */
     public static byte min(byte[] data, byte tombstone, int from, int to) {
-        var minVector = ByteVector.broadcast(SPECIES_PREFERRED, Integer.MAX_VALUE);
+        var minVector = ByteVector.broadcast(SPECIES_PREFERRED, Byte.MAX_VALUE);
         for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
             var nextVector = ByteVector.fromArray(SPECIES_PREFERRED, data, from);
             var tombstoneMask = nextVector.eq(tombstone).not();
