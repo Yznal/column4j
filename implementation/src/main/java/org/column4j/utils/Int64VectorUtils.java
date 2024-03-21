@@ -23,10 +23,10 @@ public final class Int64VectorUtils {
      * @param tombstone ignored value
      * @param from      from index (inclusive)
      * @param to        to index (exclusive)
-     * @return maximum on array or {@link Integer#MIN_VALUE}
+     * @return maximum on array or {@link Long#MIN_VALUE}
      */
     public static long max(long[] data, long tombstone, int from, int to) {
-        var maxVector = LongVector.broadcast(SPECIES_PREFERRED, Integer.MIN_VALUE);
+        var maxVector = LongVector.broadcast(SPECIES_PREFERRED, Long.MIN_VALUE);
         for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
             var nextVector = LongVector.fromArray(SPECIES_PREFERRED, data, from);
             var tombstoneMask = nextVector.eq(tombstone).not();
@@ -48,10 +48,10 @@ public final class Int64VectorUtils {
      * @param tombstone ignored value
      * @param from      from index (inclusive)
      * @param to        to index (exclusive)
-     * @return minimum on array or {@link Integer#MAX_VALUE}
+     * @return minimum on array or {@link Long#MAX_VALUE}
      */
     public static long min(long[] data, long tombstone, int from, int to) {
-        var minVector = LongVector.broadcast(SPECIES_PREFERRED, Integer.MAX_VALUE);
+        var minVector = LongVector.broadcast(SPECIES_PREFERRED, Long.MAX_VALUE);
         for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
             var nextVector = LongVector.fromArray(SPECIES_PREFERRED, data, from);
             var tombstoneMask = nextVector.eq(tombstone).not();
