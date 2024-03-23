@@ -36,13 +36,13 @@ public class Int64MutableColumnBenchmark {
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void benchmarkWriteInInt64Column4j() {
+    public void writeColumn4j() {
         createAndFillColumn();
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void benchmarkWriteAndReadFromColumn4j() {
+    public void writeReadColumn4j() {
         var column = createAndFillColumn();
         for (int i = 0; i < arraySize; ++i) {
             long ignore = column.get(i);

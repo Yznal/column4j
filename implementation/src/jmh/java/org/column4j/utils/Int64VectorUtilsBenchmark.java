@@ -32,7 +32,7 @@ public class Int64VectorUtilsBenchmark {
     }
 
     @BenchmarkMode(Mode.Throughput)
-    public void benchmarkAgregationColumn4j() {
+    public void agregationColumn4j() {
         Int64VectorUtils.min(array, Long.MAX_VALUE, 0, arraySize);
         Int64VectorUtils.max(array, Long.MAX_VALUE, 0, arraySize);
         Int64VectorUtils.indexOfAnother(array, array[arraySize/2], 0, arraySize);
