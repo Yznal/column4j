@@ -37,17 +37,20 @@ class Int8VectorUtilsTest {
 
     @Test
     void indexOfAnotherTest() {
-        byte[] array = {1, 2, 100, 2, 1, 121, 111, 100};
-
-        assertEquals(2, Int8VectorUtils.indexOfAnother(array, (byte)100, 0, arraySize));
-        assertEquals(7, Int8VectorUtils.lastIndexOfAnother(array, (byte)100, 0, arraySize));
-    }
-
-    @Test
-    void indexOfAnotherWhenArrayHasSameValuesTest() {
         byte[] array = new byte[arraySize];
         Arrays.fill(array, (byte)2);
-        assertEquals(-1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, arraySize));
-        assertEquals(-1, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, arraySize));
+
+        assertEquals(0, Int8VectorUtils.indexOfAnother(array, (byte)1, 0, array.length));
+        assertEquals(array.length - 1, Int8VectorUtils.lastIndexOfAnother(array, (byte)1, 0, array.length));
+        assertEquals(-1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, array.length));
+        assertEquals(-1, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, array.length));
+        assertEquals(index2, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, array.length));
     }
 }
