@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Int8VectorUtilsTest {
     private final Random random = new Random();
-    private final int arraySize = 300;
+    private final int arraySize = 1000;
 
     @Test
     void minMaxTest() {
@@ -52,5 +52,31 @@ class Int8VectorUtilsTest {
 
         assertEquals(index1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, array.length));
         assertEquals(index2, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, array.length));
+    }
+
+    @Test
+    void sumTest() {
+        byte[] array1 = new byte[arraySize];
+        byte[] array2 = new byte[arraySize];
+
+        int start1 = Math.min(10, arraySize / 2);
+        int start2 = Math.min(5, arraySize / 4);
+        int elements = Math.min(arraySize / 3, arraySize - start1 - 1);
+
+        byte[] expected = new byte[elements];
+
+        for (int i = 0; i < arraySize; i++) {
+            array1[i] = (byte)random.nextInt(Byte.MAX_VALUE / 2);
+            array2[i] = (byte)random.nextInt(Byte.MAX_VALUE / 2);
+        }
+        for (int i = 0; i < elements; i++) {
+            expected[i] = (byte)(array1[start1 + i] + array2[start2 + i]);
+        }
+
+        byte[] result = Int8VectorUtils.sum(array1, array2, start1, start2, elements);
+
+        for (int i = 0; i < elements; i++) {
+            assertEquals(expected[i], result[i]);
+        }
     }
 }
