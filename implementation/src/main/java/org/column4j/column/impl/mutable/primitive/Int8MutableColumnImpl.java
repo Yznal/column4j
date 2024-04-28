@@ -117,4 +117,19 @@ public class Int8MutableColumnImpl implements Int8MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public byte getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }

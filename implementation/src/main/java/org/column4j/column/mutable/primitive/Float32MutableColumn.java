@@ -27,4 +27,6 @@ public interface Float32MutableColumn extends MutableColumn<float[], Float32Stat
 
     @Override
     Float32MutableColumnChunk getChunk(int index);
+
+    float getTombstone();
 }

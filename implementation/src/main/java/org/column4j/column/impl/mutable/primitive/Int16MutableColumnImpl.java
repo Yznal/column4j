@@ -117,4 +117,19 @@ public class Int16MutableColumnImpl implements Int16MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public short getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }

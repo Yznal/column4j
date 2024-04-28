@@ -118,4 +118,19 @@ public class Float64MutableColumnImpl implements Float64MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public double getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }

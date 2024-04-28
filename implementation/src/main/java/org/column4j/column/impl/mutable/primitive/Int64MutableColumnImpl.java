@@ -117,4 +117,19 @@ public class Int64MutableColumnImpl implements Int64MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public long getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }

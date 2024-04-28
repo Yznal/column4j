@@ -118,4 +118,19 @@ public class Float32MutableColumnImpl implements Float32MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public float getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }

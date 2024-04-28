@@ -117,4 +117,19 @@ public class Int32MutableColumnImpl implements Int32MutableColumn {
             buffer[i] = get(from);
         }
     }
+
+    @Override
+    public int getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public int chunkSize() {
+        return maxChunkSize;
+    }
 }
