@@ -1,6 +1,6 @@
 package org.column4j.aggregate;
 
-import org.column4j.column.mutable.primitive.Int64MutableColumn;
+import org.column4j.column.mutable.primitive.Float32MutableColumn;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,20 +11,20 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.column4j.column.impl.mutable.primitive.Int64MutableColumnImpl;
-import org.column4j.aggregate.Int64Aggregator;
+import org.column4j.column.impl.mutable.primitive.Float32MutableColumnImpl;
+import org.column4j.aggregate.Float32Aggregator;
 
-class Int64AggregatorTest {
+class Float32AggregatorTest {
     private final Random random = new Random();
     private final int columnSize = 1000;
     private final int maxChunkSize = 23;
-    private final long tombstone = 34;
+    private final float tombstone = (float)3.141592653589793;
 
     @Test
     void minMaxTest() {
-        var column = new Int64MutableColumnImpl(maxChunkSize, tombstone);
-        long max = Long.MIN_VALUE;
-        long min = Long.MAX_VALUE;
+        var column = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+        float max = Float.MIN_VALUE;
+        float min = Float.MAX_VALUE;
         int from = columnSize / 7;
         int to = 9 * columnSize / 11;
 
@@ -32,7 +32,7 @@ class Int64AggregatorTest {
             if (random.nextBoolean()) {
                 continue;
             }
-            long value = random.nextLong();
+            float value = random.nextFloat(Float.MAX_VALUE);
             column.write(i, value);
 
             if (i >= from && i < to) {
@@ -45,25 +45,25 @@ class Int64AggregatorTest {
             }
         }
 
-        assertEquals(min, Int64Aggregator.min(column, from, to));
-        assertEquals(max, Int64Aggregator.max(column, from, to));
+        assertEquals(min, Float32Aggregator.min(column, from, to));
+        assertEquals(max, Float32Aggregator.max(column, from, to));
     }
 
     @Test
     void indexOfAnotherTest() {
         final int testedValues = 25;
-        var column = new Int64MutableColumnImpl(maxChunkSize, tombstone);
+        var column = new Float32MutableColumnImpl(maxChunkSize, tombstone);
         int from = columnSize / 7;
         int to = 9 * columnSize / 11;
 
-        long defaultValue = random.nextLong();
+        float defaultValue = random.nextFloat();
 
         while (defaultValue == tombstone) {
-            defaultValue = random.nextLong();
+            defaultValue = random.nextFloat();
         }
 
         for (int i = 0; i < columnSize; ++i) {
-            long value = random.nextLong();
+            float value = random.nextFloat(Float.MAX_VALUE);
             column.write(i, defaultValue);
             if (random.nextBoolean()) {
                 column.write(i, defaultValue);
@@ -75,9 +75,9 @@ class Int64AggregatorTest {
 
         for (int i = 0; i < testedValues; i++) {
             int index = random.nextInt(from, to);
-            long value = random.nextLong();
+            float value = random.nextFloat();
             while (value == defaultValue) {
-                value = random.nextLong();
+                value = random.nextFloat();
             }
             column.write(index, value);
 
@@ -85,8 +85,8 @@ class Int64AggregatorTest {
             expectedLastIndexOfAnother = Math.max(expectedLastIndexOfAnother, index);
         }
 
-        assertEquals(expectedIndexOfAnother, Int64Aggregator.indexOfAnother(column, defaultValue, from, to));
-        assertEquals(expectedLastIndexOfAnother, Int64Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
+        assertEquals(expectedIndexOfAnother, Float32Aggregator.indexOfAnother(column, defaultValue, from, to));
+        assertEquals(expectedLastIndexOfAnother, Float32Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
     }
 
     @Test
