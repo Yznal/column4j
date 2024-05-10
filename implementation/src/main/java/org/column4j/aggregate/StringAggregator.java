@@ -8,8 +8,8 @@ public class StringAggregator {
         final int chunkSize = column.chunkSize();
         int offset = from - from % chunkSize;
 
-        if (to / chunkSize == from / chunkSize) {
-            return offset + StringUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, to % chunkSize);
+        if (from / chunkSize == (to - 1) / chunkSize) {
+            return offset + StringUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
         }
 
         int res = StringUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
@@ -17,7 +17,7 @@ public class StringAggregator {
             return offset + res;
         }
 
-        for (int i = from / chunkSize + 1; i < to / chunkSize; i++) {
+        for (int i = from / chunkSize + 1; i < (to - 1) / chunkSize; i++) {
             offset += chunkSize;
             res = StringUtils.indexOfAnother(column.getChunk(i).getData(), value, 0, column.chunkSize());
             if (res != -1) {
@@ -26,23 +26,23 @@ public class StringAggregator {
         }
 
         offset += chunkSize;
-        return offset + StringUtils.indexOfAnother(column.getChunk(to / chunkSize).getData(), value, 0, to % chunkSize);
+        return offset + StringUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
     }
 
     static public int lastIndexOfAnother(StringMutableColumn column, String value, int from, int to) {
         final int chunkSize = column.chunkSize();
         int offset = to - to % chunkSize;
 
-        if (to / chunkSize == from / chunkSize) {
-            return offset + StringUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, to % chunkSize);
+        if (from / chunkSize == (to - 1) / chunkSize) {
+            return offset + StringUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize);
         }
 
-        int res =  StringUtils.lastIndexOfAnother(column.getChunk(to / chunkSize).getData(), value, 0, to % chunkSize);
+        int res =  StringUtils.lastIndexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize);
         if (res != -1) {
             return offset + res;
         }
 
-        for (int i = to / chunkSize - 1; i > from / chunkSize; i--) {
+        for (int i = (to - 1) / chunkSize - 1; i > from / chunkSize; i--) {
             offset -= chunkSize;
             res = StringUtils.lastIndexOfAnother(column.getChunk(i).getData(), value, 0, column.chunkSize());
             if (res != -1) {
