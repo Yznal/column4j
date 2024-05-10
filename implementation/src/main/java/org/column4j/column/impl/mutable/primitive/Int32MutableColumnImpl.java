@@ -119,17 +119,17 @@ public class Int32MutableColumnImpl implements Int32MutableColumn {
     }
 
     @Override
-    public int getTombstone() {
+    public final int getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }

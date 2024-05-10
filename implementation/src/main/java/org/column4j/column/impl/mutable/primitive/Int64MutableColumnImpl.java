@@ -119,17 +119,17 @@ public class Int64MutableColumnImpl implements Int64MutableColumn {
     }
 
     @Override
-    public long getTombstone() {
+    public final long getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }

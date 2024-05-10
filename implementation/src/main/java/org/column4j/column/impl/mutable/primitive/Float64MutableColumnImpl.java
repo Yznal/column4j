@@ -31,9 +31,9 @@ public class Float64MutableColumnImpl implements Float64MutableColumn {
     @Override
     public int size() {
         return chunks.stream()
-                .map(ColumnChunk::getStatistic)
-                .mapToInt(Statistic::getCount)
-                .sum();
+            .map(ColumnChunk::getStatistic)
+            .mapToInt(Statistic::getCount)
+            .sum();
     }
 
     @Override
@@ -120,17 +120,17 @@ public class Float64MutableColumnImpl implements Float64MutableColumn {
     }
 
     @Override
-    public double getTombstone() {
+    public final double getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }

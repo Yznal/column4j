@@ -119,17 +119,17 @@ public class Int16MutableColumnImpl implements Int16MutableColumn {
     }
 
     @Override
-    public short getTombstone() {
+    public final short getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }

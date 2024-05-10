@@ -119,17 +119,17 @@ public class Int8MutableColumnImpl implements Int8MutableColumn {
     }
 
     @Override
-    public byte getTombstone() {
+    public final byte getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }

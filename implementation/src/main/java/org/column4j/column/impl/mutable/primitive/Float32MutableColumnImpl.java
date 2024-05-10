@@ -120,17 +120,17 @@ public class Float32MutableColumnImpl implements Float32MutableColumn {
     }
 
     @Override
-    public float getTombstone() {
+    public final float getTombstone() {
         return tombstone;
     }
 
     @Override
-    public int countChunks() {
+    public final int countChunks() {
         return chunks.size();
     }
 
     @Override
-    public int chunkSize() {
+    public final int chunkSize() {
         return maxChunkSize;
     }
 }
