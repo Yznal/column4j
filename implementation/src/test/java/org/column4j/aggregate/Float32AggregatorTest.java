@@ -2,21 +2,17 @@ package org.column4j.aggregate;
 
 import org.column4j.column.mutable.primitive.Float32MutableColumn;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Random;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.column4j.column.impl.mutable.primitive.Float32MutableColumnImpl;
-import org.column4j.aggregate.Float32Aggregator;
 
 class Float32AggregatorTest {
     private final Random random = new Random();
     private final int columnSize = 1000;
+    private final int columnsCount = 12;
     private final int maxChunkSize = 23;
     private final float tombstone = (float)3.141592653589793;
 
@@ -90,6 +86,82 @@ class Float32AggregatorTest {
     }
 
     @Test
-    void sumTest() {
+    void mulTwoColumnsTest() {
+        var column1 = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+        var column2 = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+        var expected = new float[columnSize];
+
+        for (int i = 0; i < columnSize; i++) {
+            float val1 = random.nextFloat();
+            float val2 = random.nextFloat();
+            column1.write(i, val1);
+            column2.write(i, val2);
+            expected[i] = val1 * val2;
+        }
+
+        var resColumn = Float32Aggregator.mul(column1, column2, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(resColumn.get(i), expected[i]);
+        }
+    }
+
+    @Test
+    void sumTwoColumnsTest() {
+        var column1 = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+        var column2 = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+        var expected = new float[columnSize];
+
+        for (int i = 0; i < columnSize; i++) {
+            float val1 = random.nextFloat();
+            float val2 = random.nextFloat();
+            column1.write(i, val1);
+            column2.write(i, val2);
+            expected[i] = val1 + val2;
+        }
+
+        var resColumn = Float32Aggregator.sum(column1, column2, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(resColumn.get(i), expected[i]);
+        }
+    }
+
+    @Test
+    void mulManyColumnsTest() {
+        var columns = new Float32MutableColumn[columnsCount];
+        var expected = new float[columnSize];
+        for (int i = 0; i < columnsCount; i++) {
+            columns[i] = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+            for (int j = 0; j < columnSize; j++) {
+                float val = random.nextFloat();
+                columns[i].write(j, val);
+                expected[j] = i == 0 ? val : expected[j] * val;
+            }
+        }
+        Float32MutableColumn result = Float32Aggregator.mul(columns, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(expected[i], result.get(i));
+        }
+    }
+
+    @Test
+    void sumManyColumnsTest() {
+        var columns = new Float32MutableColumn[columnsCount];
+        var expected = new float[columnSize];
+        for (int i = 0; i < columnsCount; i++) {
+            columns[i] = new Float32MutableColumnImpl(maxChunkSize, tombstone);
+            for (int j = 0; j < columnSize; j++) {
+                float val = random.nextFloat();
+                columns[i].write(j, val);
+                expected[j] += val;
+            }
+        }
+        Float32MutableColumn result = Float32Aggregator.sum(columns, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(expected[i], result.get(i));
+        }
     }
 }

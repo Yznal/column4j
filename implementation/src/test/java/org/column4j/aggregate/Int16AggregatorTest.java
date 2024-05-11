@@ -1,22 +1,17 @@
 package org.column4j.aggregate;
 
+import org.column4j.column.impl.mutable.primitive.Int16MutableColumnImpl;
 import org.column4j.column.mutable.primitive.Int16MutableColumn;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Random;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import org.column4j.column.impl.mutable.primitive.Int16MutableColumnImpl;
-import org.column4j.aggregate.Int16Aggregator;
 
 class Int16AggregatorTest {
     private final Random random = new Random();
     private final int columnSize = 1000;
+    private final int columnsCount = 12;
     private final int maxChunkSize = 23;
     private final short tombstone = 34;
 
@@ -91,5 +86,85 @@ class Int16AggregatorTest {
 
     @Test
     void sumTest() {
+    }
+
+    @Test
+    void mulTwoColumnsTest() {
+        var column1 = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+        var column2 = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+        var expected = new short[columnSize];
+
+        for (int i = 0; i < columnSize; i++) {
+            short val1 = (short)random.nextInt();
+            short val2 = (short)random.nextInt();
+            column1.write(i, val1);
+            column2.write(i, val2);
+            expected[i] = (short) (val1 * val2);
+        }
+
+        var resColumn = Int16Aggregator.mul(column1, column2, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(resColumn.get(i), expected[i]);
+        }
+    }
+
+    @Test
+    void sumTwoColumnsTest() {
+        var column1 = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+        var column2 = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+        var expected = new short[columnSize];
+
+        for (int i = 0; i < columnSize; i++) {
+            short val1 = (short)random.nextInt();
+            short val2 = (short)random.nextInt();
+            column1.write(i, val1);
+            column2.write(i, val2);
+            expected[i] = (short) (val1 + val2);
+        }
+
+        var resColumn = Int16Aggregator.sum(column1, column2, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(resColumn.get(i), expected[i]);
+        }
+    }
+
+    @Test
+    void mulManyColumnsTest() {
+        var columns = new Int16MutableColumn[columnsCount];
+        var expected = new short[columnSize];
+        for (int i = 0; i < columnsCount; i++) {
+            columns[i] = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+            for (int j = 0; j < columnSize; j++) {
+                short val = (short)random.nextInt();
+                columns[i].write(j, val);
+                expected[j] = i == 0 ? val : (short) (expected[j] * val);
+            }
+        }
+        Int16MutableColumn result = Int16Aggregator.mul(columns, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(expected[i], result.get(i));
+        }
+    }
+
+    @Test
+    void sumManyColumnsTest() {
+        var columns = new Int16MutableColumn[columnsCount];
+        var expected = new short[columnSize];
+        for (int i = 0; i < columnsCount; i++) {
+            columns[i] = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+            for (int j = 0; j < columnSize; j++) {
+                short val = (short)random.nextInt();
+                columns[i].write(j, val);
+                expected[j] += val;
+            }
+        }
+        Int16MutableColumn result = Int16Aggregator.sum(columns, columnSize, maxChunkSize);
+
+        for (int i = 0; i < columnSize; i++) {
+            assertEquals(expected[i], result.get(i));
+        }
     }
 }

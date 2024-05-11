@@ -1,5 +1,6 @@
 package org.column4j.aggregate;
 
+import org.column4j.column.impl.mutable.primitive.Float32MutableColumnImpl;
 import org.column4j.column.mutable.primitive.Float32MutableColumn;
 import org.column4j.utils.Float32VectorUtils;
 
@@ -92,5 +93,53 @@ public class Float32Aggregator {
         res = Math.max(res, maxInTail);
 
         return res;
+    }
+
+    static public Float32MutableColumn mul(Float32MutableColumn column1, Float32MutableColumn column2, int elements, int resChunkSize) {
+        float[] data1 = column1.getByIndexes(0, elements);
+        float[] data2 = column2.getByIndexes(0, elements);
+        float[] resData = Float32VectorUtils.mul(data1, data2, 0, 0, elements);
+        var resColumn = new Float32MutableColumnImpl(resChunkSize, column1.getTombstone() * column2.getTombstone());
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Float32MutableColumn sum(Float32MutableColumn column1, Float32MutableColumn column2, int elements, int resChunkSize) {
+        float[] data1 = column1.getByIndexes(0, elements);
+        float[] data2 = column2.getByIndexes(0, elements);
+        float[] resData = Float32VectorUtils.sum(data1, data2, 0, 0, elements);
+        var resColumn = new Float32MutableColumnImpl(resChunkSize, column1.getTombstone() + column2.getTombstone());
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Float32MutableColumn mul(Float32MutableColumn[] columns, int elements, int resChunkSize) {
+        float resTombstone = columns[0].getTombstone();
+        float[] resData = columns[0].getByIndexes(0, elements - 1);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone *= columns[i].getTombstone();
+            float[] data = columns[i].getByIndexes(0, elements);
+            resData = Float32VectorUtils.mul(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Float32MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Float32MutableColumn sum(Float32MutableColumn[] columns, int elements, int resChunkSize) {
+        float resTombstone = columns[0].getTombstone();
+        float[] resData = columns[0].getByIndexes(0, elements);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone += columns[i].getTombstone();
+            float[] data = columns[i].getByIndexes(0, elements);
+            resData = Float32VectorUtils.sum(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Float32MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
     }
 }

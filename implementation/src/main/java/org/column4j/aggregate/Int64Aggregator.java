@@ -1,5 +1,6 @@
 package org.column4j.aggregate;
 
+import org.column4j.column.impl.mutable.primitive.Int64MutableColumnImpl;
 import org.column4j.column.mutable.primitive.Int64MutableColumn;
 import org.column4j.utils.Int64VectorUtils;
 
@@ -92,5 +93,53 @@ public class Int64Aggregator {
         res = Math.max(res, maxInTail);
 
         return res;
+    }
+
+    static public Int64MutableColumn mul(Int64MutableColumn column1, Int64MutableColumn column2, int elements, int resChunkSize) {
+        long[] data1 = column1.getByIndexes(0, elements);
+        long[] data2 = column2.getByIndexes(0, elements);
+        long[] resData = Int64VectorUtils.mul(data1, data2, 0, 0, elements);
+        var resColumn = new Int64MutableColumnImpl(resChunkSize, column1.getTombstone() * column2.getTombstone());
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int64MutableColumn sum(Int64MutableColumn column1, Int64MutableColumn column2, int elements, int resChunkSize) {
+        long[] data1 = column1.getByIndexes(0, elements);
+        long[] data2 = column2.getByIndexes(0, elements);
+        long[] resData = Int64VectorUtils.sum(data1, data2, 0, 0, elements);
+        var resColumn = new Int64MutableColumnImpl(resChunkSize, column1.getTombstone() + column2.getTombstone());
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int64MutableColumn mul(Int64MutableColumn[] columns, int elements, int resChunkSize) {
+        long resTombstone = columns[0].getTombstone();
+        long[] resData = columns[0].getByIndexes(0, elements - 1);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone *= columns[i].getTombstone();
+            long[] data = columns[i].getByIndexes(0, elements);
+            resData = Int64VectorUtils.mul(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int64MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int64MutableColumn sum(Int64MutableColumn[] columns, int elements, int resChunkSize) {
+        long resTombstone = columns[0].getTombstone();
+        long[] resData = columns[0].getByIndexes(0, elements);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone += columns[i].getTombstone();
+            long[] data = columns[i].getByIndexes(0, elements);
+            resData = Int64VectorUtils.sum(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int64MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
     }
 }

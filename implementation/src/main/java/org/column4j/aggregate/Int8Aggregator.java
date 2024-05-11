@@ -1,5 +1,6 @@
 package org.column4j.aggregate;
 
+import org.column4j.column.impl.mutable.primitive.Int8MutableColumnImpl;
 import org.column4j.column.mutable.primitive.Int8MutableColumn;
 import org.column4j.utils.Int8VectorUtils;
 
@@ -92,5 +93,53 @@ public class Int8Aggregator {
         res = (byte)Math.max(res, maxInTail);
 
         return res;
+    }
+
+    static public Int8MutableColumn mul(Int8MutableColumn column1, Int8MutableColumn column2, int elements, int resChunkSize) {
+        byte[] data1 = column1.getByIndexes(0, elements);
+        byte[] data2 = column2.getByIndexes(0, elements);
+        byte[] resData = Int8VectorUtils.mul(data1, data2, 0, 0, elements);
+        var resColumn = new Int8MutableColumnImpl(resChunkSize, (byte) (column1.getTombstone() * column2.getTombstone()));
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int8MutableColumn sum(Int8MutableColumn column1, Int8MutableColumn column2, int elements, int resChunkSize) {
+        byte[] data1 = column1.getByIndexes(0, elements);
+        byte[] data2 = column2.getByIndexes(0, elements);
+        byte[] resData = Int8VectorUtils.sum(data1, data2, 0, 0, elements);
+        var resColumn = new Int8MutableColumnImpl(resChunkSize, (byte) (column1.getTombstone() + column2.getTombstone()));
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int8MutableColumn mul(Int8MutableColumn[] columns, int elements, int resChunkSize) {
+        byte resTombstone = columns[0].getTombstone();
+        byte[] resData = columns[0].getByIndexes(0, elements - 1);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone *= columns[i].getTombstone();
+            byte[] data = columns[i].getByIndexes(0, elements);
+            resData = Int8VectorUtils.mul(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int8MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int8MutableColumn sum(Int8MutableColumn[] columns, int elements, int resChunkSize) {
+        byte resTombstone = columns[0].getTombstone();
+        byte[] resData = columns[0].getByIndexes(0, elements);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone += columns[i].getTombstone();
+            byte[] data = columns[i].getByIndexes(0, elements);
+            resData = Int8VectorUtils.sum(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int8MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
     }
 }

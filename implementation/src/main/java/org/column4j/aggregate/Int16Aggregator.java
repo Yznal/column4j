@@ -1,5 +1,6 @@
 package org.column4j.aggregate;
 
+import org.column4j.column.impl.mutable.primitive.Int16MutableColumnImpl;
 import org.column4j.column.mutable.primitive.Int16MutableColumn;
 import org.column4j.utils.Int16VectorUtils;
 
@@ -92,5 +93,53 @@ public class Int16Aggregator {
         res = (short)Math.max(res, maxInTail);
 
         return res;
+    }
+
+    static public Int16MutableColumn mul(Int16MutableColumn column1, Int16MutableColumn column2, int elements, int resChunkSize) {
+        short[] data1 = column1.getByIndexes(0, elements);
+        short[] data2 = column2.getByIndexes(0, elements);
+        short[] resData = Int16VectorUtils.mul(data1, data2, 0, 0, elements);
+        var resColumn = new Int16MutableColumnImpl(resChunkSize, (short) (column1.getTombstone() * column2.getTombstone()));
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int16MutableColumn sum(Int16MutableColumn column1, Int16MutableColumn column2, int elements, int resChunkSize) {
+        short[] data1 = column1.getByIndexes(0, elements);
+        short[] data2 = column2.getByIndexes(0, elements);
+        short[] resData = Int16VectorUtils.sum(data1, data2, 0, 0, elements);
+        var resColumn = new Int16MutableColumnImpl(resChunkSize, (short) (column1.getTombstone() + column2.getTombstone()));
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int16MutableColumn mul(Int16MutableColumn[] columns, int elements, int resChunkSize) {
+        short resTombstone = columns[0].getTombstone();
+        short[] resData = columns[0].getByIndexes(0, elements - 1);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone *= columns[i].getTombstone();
+            short[] data = columns[i].getByIndexes(0, elements);
+            resData = Int16VectorUtils.mul(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int16MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
+    }
+
+    static public Int16MutableColumn sum(Int16MutableColumn[] columns, int elements, int resChunkSize) {
+        short resTombstone = columns[0].getTombstone();
+        short[] resData = columns[0].getByIndexes(0, elements);
+
+        for (int i = 1; i < columns.length; i++) {
+            resTombstone += columns[i].getTombstone();
+            short[] data = columns[i].getByIndexes(0, elements);
+            resData = Int16VectorUtils.sum(data, resData, 0, 0, elements);
+        }
+
+        var resColumn = new Int16MutableColumnImpl(resChunkSize, resTombstone);
+        resColumn.writeByIndexes(0, elements - 1, resData);
+        return resColumn;
     }
 }
