@@ -119,6 +119,30 @@ public class StringMutableColumnImpl implements StringMutableColumn {
     }
 
     @Override
+    public void writeByIndexes(int[] indexes, String[] values) {
+        if (indexes.length > values.length) {
+            throw new IllegalArgumentException("indexes length should be less or equals to buffer length");
+        }
+        for (int i = 0; i < indexes.length; i++) {
+            write(indexes[i], values[i]);
+        }
+    }
+
+    @Override
+    public void writeByIndexes(int from, int to, String[] values) {
+        var size = to - from + 1;
+        if (size > values.length) {
+            throw new IllegalArgumentException("Bound length should be less or equals to buffer length");
+        }
+        if (from > to) {
+            throw new IllegalArgumentException("'from' should be less or equals to 'to'");
+        }
+        for (int i = 0; from <= to; from++, i++) {
+            write(from, values[i]);
+        }
+    }
+
+    @Override
     public String getTombstone() {
         return tombstone;
     }
