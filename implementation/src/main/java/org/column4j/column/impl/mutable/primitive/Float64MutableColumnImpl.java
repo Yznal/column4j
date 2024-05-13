@@ -31,9 +31,9 @@ public class Float64MutableColumnImpl implements Float64MutableColumn {
     @Override
     public int size() {
         return chunks.stream()
-                .map(ColumnChunk::getStatistic)
-                .mapToInt(Statistic::getCount)
-                .sum();
+            .map(ColumnChunk::getStatistic)
+            .mapToInt(Statistic::getCount)
+            .sum();
     }
 
     @Override
@@ -117,5 +117,44 @@ public class Float64MutableColumnImpl implements Float64MutableColumn {
         for (int i = 0; from <= to; from++, i++) {
             buffer[i] = get(from);
         }
+    }
+
+    @Override
+    public void writeByIndexes(int[] indexes, double[] values) {
+        if (indexes.length > values.length) {
+            throw new IllegalArgumentException("indexes length should be less or equals to buffer length");
+        }
+        for (int i = 0; i < indexes.length; i++) {
+            write(indexes[i], values[i]);
+        }
+    }
+
+    @Override
+    public void writeByIndexes(int from, int to, double[] values) {
+        var size = to - from + 1;
+        if (size > values.length) {
+            throw new IllegalArgumentException("Bound length should be less or equals to buffer length");
+        }
+        if (from > to) {
+            throw new IllegalArgumentException("'from' should be less or equals to 'to'");
+        }
+        for (int i = 0; from <= to; from++, i++) {
+            write(from, values[i]);
+        }
+    }
+
+    @Override
+    public final double getTombstone() {
+        return tombstone;
+    }
+
+    @Override
+    public final int countChunks() {
+        return chunks.size();
+    }
+
+    @Override
+    public final int chunkSize() {
+        return maxChunkSize;
     }
 }

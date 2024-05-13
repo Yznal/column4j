@@ -26,4 +26,6 @@ public interface StringMutableColumn extends MutableColumn<String[], StringStati
 
     @Override
     StringMutableColumnChunk getChunk(int index);
+
+    String getTombstone();
 }

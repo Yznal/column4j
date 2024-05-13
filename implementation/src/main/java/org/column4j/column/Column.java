@@ -63,4 +63,23 @@ public interface Column<T, S extends Statistic> {
      * @param buffer buffer to write values
      */
     void readByIndexes(int from, int to, T buffer);
+
+    /**
+     * Write into column values from buffer by indexes array.
+     * Buffer size must be the same length as indexes, otherwise {@link IllegalArgumentException} should be thrown.
+     *
+     * @param indexes indexes to get
+     * @param values  values to write in column
+     */
+    void writeByIndexes(int[] indexes, T values);
+
+    /**
+     * Write column values from values by indexes bounds
+     * Buffer size must be the same length as indexes, otherwise {@link IllegalArgumentException} should be thrown.
+     *
+     * @param from   left bound inclusive
+     * @param to     right bound inclusive
+     * @param values values to write in column
+     */
+    void writeByIndexes(int from, int to, T values);
 }

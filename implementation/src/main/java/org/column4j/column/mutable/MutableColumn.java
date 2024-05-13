@@ -24,4 +24,8 @@ public interface MutableColumn<T, S extends Statistic> extends Column<T, S> {
      * @return instance of mutable chunk
      */
     MutableColumnChunk<T, S> getChunk(int index);
+
+    int countChunks();
+
+    int chunkSize();
 }

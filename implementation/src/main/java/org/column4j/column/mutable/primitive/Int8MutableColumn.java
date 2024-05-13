@@ -27,4 +27,6 @@ public interface Int8MutableColumn extends MutableColumn<byte[], Int8Statistic> 
 
     @Override
     Int8MutableColumnChunk getChunk(int index);
+
+    byte getTombstone();
 }

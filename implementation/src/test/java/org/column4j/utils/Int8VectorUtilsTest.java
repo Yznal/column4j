@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Int8VectorUtilsTest {
     private final Random random = new Random();
-    private final int arraySize = 300;
+    private final int arraySize = 1000;
 
     @Test
     void minMaxTest() {
@@ -37,17 +37,46 @@ class Int8VectorUtilsTest {
 
     @Test
     void indexOfAnotherTest() {
-        byte[] array = {1, 2, 100, 2, 1, 121, 111, 100};
+        byte[] array = new byte[arraySize];
+        Arrays.fill(array, (byte)2);
 
-        assertEquals(2, Int8VectorUtils.indexOfAnother(array, (byte)100, 0, arraySize));
-        assertEquals(7, Int8VectorUtils.lastIndexOfAnother(array, (byte)100, 0, arraySize));
+        assertEquals(0, Int8VectorUtils.indexOfAnother(array, (byte)1, 0, array.length));
+        assertEquals(array.length - 1, Int8VectorUtils.lastIndexOfAnother(array, (byte)1, 0, array.length));
+        assertEquals(-1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, array.length));
+        assertEquals(-1, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, array.length));
+        assertEquals(index2, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, array.length));
     }
 
     @Test
-    void indexOfAnotherWhenArrayHasSameValuesTest() {
-        byte[] array = new byte[arraySize];
-        Arrays.fill(array, (byte)2);
-        assertEquals(-1, Int8VectorUtils.indexOfAnother(array, (byte)2, 0, arraySize));
-        assertEquals(-1, Int8VectorUtils.lastIndexOfAnother(array, (byte)2, 0, arraySize));
+    void sumTest() {
+        byte[] array1 = new byte[arraySize];
+        byte[] array2 = new byte[arraySize];
+
+        int start1 = Math.min(10, arraySize / 2);
+        int start2 = Math.min(5, arraySize / 4);
+        int elements = Math.min(arraySize / 3, arraySize - start1 - 1);
+
+        byte[] expected = new byte[elements];
+
+        for (int i = 0; i < arraySize; i++) {
+            array1[i] = (byte)random.nextInt(Byte.MAX_VALUE / 2);
+            array2[i] = (byte)random.nextInt(Byte.MAX_VALUE / 2);
+        }
+        for (int i = 0; i < elements; i++) {
+            expected[i] = (byte)(array1[start1 + i] + array2[start2 + i]);
+        }
+
+        byte[] result = Int8VectorUtils.sum(array1, array2, start1, start2, elements);
+
+        for (int i = 0; i < elements; i++) {
+            assertEquals(expected[i], result[i]);
+        }
     }
 }

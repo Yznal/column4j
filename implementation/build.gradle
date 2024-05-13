@@ -10,7 +10,7 @@ version '0.0.1'
 targetCompatibility = JavaVersion.VERSION_21
 sourceCompatibility = JavaVersion.VERSION_21
 
-def previewJvmArgs = Arrays.asList(preiview_jvm_args.split(' '))
+def previewJvmArgs = Arrays.asList(preview_jvm_args.split(' '))
 
 repositories {
     mavenCentral()

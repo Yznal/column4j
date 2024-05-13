@@ -27,4 +27,6 @@ public interface Float64MutableColumn extends MutableColumn<double[], Float64Sta
 
     @Override
     Float64MutableColumnChunk getChunk(int index);
+
+    double getTombstone();
 }

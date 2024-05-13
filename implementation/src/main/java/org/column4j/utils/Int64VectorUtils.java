@@ -1,6 +1,7 @@
 package org.column4j.utils;
 
 import jdk.incubator.vector.LongVector;
+import jdk.incubator.vector.LongVector;
 import jdk.incubator.vector.VectorOperators;
 import jdk.incubator.vector.VectorSpecies;
 
@@ -121,4 +122,63 @@ public final class Int64VectorUtils {
         return -1;
     }
 
+    /**
+     * Sums elements in two arrays
+     *
+     * @param data1  first array
+     * @param data2  second array
+     * @param offset1 offset for start of first array
+     * @param offset2 offset for start of second array
+     * @param elements count of elements to sum
+     * @return array of sums
+     */
+    public static long[] sum(long[] data1, long[] data2, int offset1, int offset2, int elements) {
+        long[] finalResult = new long[elements];
+
+        int i = 0;
+        for (; i + SPECIES_LENGTH < elements; i += SPECIES_LENGTH) {
+            var mask1 = SPECIES_PREFERRED.indexInRange(offset1 + i, data1.length);
+            var mask2 = SPECIES_PREFERRED.indexInRange(offset2 + i, data2.length);
+            var v1 = LongVector.fromArray(SPECIES_PREFERRED, data1, offset1 + i, mask1);
+            var v2 = LongVector.fromArray(SPECIES_PREFERRED, data2, offset2 + i, mask2);
+            var result = v1.add(v2, mask2);
+            result.intoArray(finalResult, i, mask1);
+        }
+
+        for (; i < elements; ++i) {
+            finalResult[i] = (long)(data1[offset1 + i] + data2[offset2 + i]);
+        }
+
+        return finalResult;
+    }
+
+    /**
+     * Multiplies elements in two arrays
+     *
+     * @param data1  first array
+     * @param data2  second array
+     * @param offset1 offset for start of first array
+     * @param offset2 offset for start of second array
+     * @param elements count of elements to multiply
+     * @return array of multiplications
+     */
+    public static long[] mul(long[] data1, long[] data2, int offset1, int offset2, int elements) {
+        long[] finalResult = new long[elements];
+
+        int i = 0;
+        for (; i + SPECIES_LENGTH < elements; i += SPECIES_LENGTH) {
+            var mask1 = SPECIES_PREFERRED.indexInRange(offset1 + i, data1.length);
+            var mask2 = SPECIES_PREFERRED.indexInRange(offset2 + i, data2.length);
+            var v1 = LongVector.fromArray(SPECIES_PREFERRED, data1, offset1 + i, mask1);
+            var v2 = LongVector.fromArray(SPECIES_PREFERRED, data2, offset2 + i, mask2);
+            var result = v1.mul(v2, mask2);
+            result.intoArray(finalResult, i, mask1);
+        }
+
+        for (; i < elements; ++i) {
+            finalResult[i] = (long)(data1[offset1 + i] * data2[offset2 + i]);
+        }
+
+        return finalResult;
+    }
 }

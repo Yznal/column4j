@@ -27,4 +27,6 @@ public interface Int64MutableColumn extends MutableColumn<long[], Int64Statistic
 
     @Override
     Int64MutableColumnChunk getChunk(int index);
+
+    long getTombstone();
 }

@@ -27,4 +27,6 @@ public interface Int32MutableColumn extends MutableColumn<int[], Int32Statistic>
 
     @Override
     Int32MutableColumnChunk getChunk(int index);
+
+    int getTombstone();
 }

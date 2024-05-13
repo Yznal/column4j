@@ -27,4 +27,6 @@ public interface Int16MutableColumn extends MutableColumn<short[], Int16Statisti
 
     @Override
     Int16MutableColumnChunk getChunk(int index);
+
+    short getTombstone();
 }
