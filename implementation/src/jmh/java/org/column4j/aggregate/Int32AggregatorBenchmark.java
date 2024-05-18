@@ -43,7 +43,7 @@ public class Int32AggregatorBenchmark {
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
     public void indexOfAnother() {
-        Int32Aggregator.indexOfAnother(column, defaultValue, 0, arraySize);
+        int res = Int32Aggregator.indexOfAnother(rarecolumn, defaultValue, 0, arraySize);
     }
 
     private Int32MutableColumnImpl GenerateColumn() {
@@ -57,9 +57,9 @@ public class Int32AggregatorBenchmark {
     private Int32MutableColumnImpl GenerateRareColumn() {
         var column = new Int32MutableColumnImpl(columnChunkSize, Integer.MAX_VALUE);
         for (int i = 0; i < arraySize; ++i) {
-            column.write(defaultValue, i);
+            column.write(i, defaultValue);
         }
-        column.write(arraySize / 2, 1);
+        column.write(arraySize / 2, defaultValue + 1);
         return column;
     }
 }
