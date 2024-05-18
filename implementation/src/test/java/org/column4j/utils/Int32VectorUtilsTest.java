@@ -55,6 +55,25 @@ class Int32VectorUtilsTest {
     }
 
     @Test
+    void indexOfTest() {
+        int[] array = new int[arraySize];
+        Arrays.fill(array, 2);
+
+        assertEquals(-1, Int32VectorUtils.indexOf(array, 1, 0, array.length));
+        assertEquals(-1, Int32VectorUtils.lastIndexOf(array, 1, 0, array.length));
+        assertEquals(0, Int32VectorUtils.indexOf(array, 2, 0, array.length));
+        assertEquals(arraySize - 1, Int32VectorUtils.lastIndexOf(array, 2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Int32VectorUtils.indexOf(array, 10, 0, array.length));
+        assertEquals(index2, Int32VectorUtils.lastIndexOf(array, 10, 0, array.length));
+    }
+
+    @Test
     void sumTest() {
         int[] array1 = new int[arraySize];
         int[] array2 = new int[arraySize];

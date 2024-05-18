@@ -55,6 +55,25 @@ class Int16VectorUtilsTest {
     }
 
     @Test
+    void indexOfTest() {
+        short[] array = new short[arraySize];
+        Arrays.fill(array, (short)2);
+
+        assertEquals(-1, Int16VectorUtils.indexOf(array, (short)1, 0, array.length));
+        assertEquals(-1, Int16VectorUtils.lastIndexOf(array, (short)1, 0, array.length));
+        assertEquals(0, Int16VectorUtils.indexOf(array, (short)2, 0, array.length));
+        assertEquals(arraySize - 1, Int16VectorUtils.lastIndexOf(array, (short)2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Int16VectorUtils.indexOf(array, (short)10, 0, array.length));
+        assertEquals(index2, Int16VectorUtils.lastIndexOf(array, (short)10, 0, array.length));
+    }
+
+    @Test
     void sumTest() {
         short[] array1 = new short[arraySize];
         short[] array2 = new short[arraySize];

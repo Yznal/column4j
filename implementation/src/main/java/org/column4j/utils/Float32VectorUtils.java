@@ -123,6 +123,61 @@ public final class Float32VectorUtils {
     }
 
     /**
+     * Find index of first element what equals to passed value
+     *
+     * @param data  source float array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int indexOf(float[] data, float value, int from, int to) {
+        for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
+            var nextVector = FloatVector.fromArray(SPECIES_PREFERRED, data, from);
+            var valueMask = nextVector.eq(value);
+            if (valueMask.anyTrue()) {
+                return from + valueMask.firstTrue();
+            }
+        }
+        // tail
+        for (; from < to; from++) {
+            if (value == data[from]) {
+                return from;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find index of last element what equals to passed value
+     *
+     * @param data  source float array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int lastIndexOf(float[] data, float value, int from, int to) {
+        for (; to > from && from + SPECIES_LENGTH <= to; to -= SPECIES_LENGTH) {
+            var nextVector = FloatVector.fromArray(SPECIES_PREFERRED, data, to - SPECIES_LENGTH);
+            var valueMask = nextVector.eq(value);
+            if (valueMask.anyTrue()) {
+                return to - SPECIES_LENGTH + valueMask.lastTrue();
+            }
+        }
+        if (to == data.length) {
+            to--;
+        }
+        // tail
+        for (; to >= from; to--) {
+            if (value == data[to]) {
+                return to;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Sums elements in two arrays
      *
      * @param data1  first array

@@ -55,6 +55,25 @@ class Int8VectorUtilsTest {
     }
 
     @Test
+    void indexOfTest() {
+        byte[] array = new byte[arraySize];
+        Arrays.fill(array, (byte)2);
+
+        assertEquals(-1, Int8VectorUtils.indexOf(array, (byte)1, 0, array.length));
+        assertEquals(-1, Int8VectorUtils.lastIndexOf(array, (byte)1, 0, array.length));
+        assertEquals(0, Int8VectorUtils.indexOf(array, (byte)2, 0, array.length));
+        assertEquals(arraySize - 1, Int8VectorUtils.lastIndexOf(array, (byte)2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Int8VectorUtils.indexOf(array, (byte)10, 0, array.length));
+        assertEquals(index2, Int8VectorUtils.lastIndexOf(array, (byte)10, 0, array.length));
+    }
+
+    @Test
     void sumTest() {
         byte[] array1 = new byte[arraySize];
         byte[] array2 = new byte[arraySize];

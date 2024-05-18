@@ -55,6 +55,25 @@ class Float64VectorUtilsTest {
     }
 
     @Test
+    void indexOfTest() {
+        double[] array = new double[arraySize];
+        Arrays.fill(array, 2);
+
+        assertEquals(-1, Float64VectorUtils.indexOf(array, 1, 0, array.length));
+        assertEquals(-1, Float64VectorUtils.lastIndexOf(array, 1, 0, array.length));
+        assertEquals(0, Float64VectorUtils.indexOf(array, 2, 0, array.length));
+        assertEquals(arraySize - 1, Float64VectorUtils.lastIndexOf(array, 2, 0, array.length));
+
+        int index1 = arraySize / 4;
+        int index2 = 3 * arraySize / 4;
+        array[index1] = 10;
+        array[index2] = 10;
+
+        assertEquals(index1, Float64VectorUtils.indexOf(array, 10, 0, array.length));
+        assertEquals(index2, Float64VectorUtils.lastIndexOf(array, 10, 0, array.length));
+    }
+
+    @Test
     void sumTest() {
         double[] array1 = new double[arraySize];
         double[] array2 = new double[arraySize];
