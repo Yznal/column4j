@@ -107,16 +107,16 @@ public final class Int16VectorUtils {
      * @return index if element found or -1 otherwise
      */
     public static int lastIndexOfAnother(short[] data, short value, int from, int to) {
-        for (; to > from && from + SPECIES_LENGTH <= to; to -= SPECIES_LENGTH) {
-            var nextVector = ShortVector.fromArray(SPECIES_PREFERRED, data, to - SPECIES_LENGTH);
+        to--;
+
+        for (; to >= from && from + SPECIES_LENGTH < to; to -= SPECIES_LENGTH) {
+            var nextVector = ShortVector.fromArray(SPECIES_PREFERRED, data, to + 1 - SPECIES_LENGTH);
             var valueMask = nextVector.eq(value).not();
             if (valueMask.anyTrue()) {
-                return to - SPECIES_LENGTH + valueMask.lastTrue();
+                return to + 1 - SPECIES_LENGTH + valueMask.lastTrue();
             }
         }
-        if (to == data.length) {
-            to--;
-        }
+
         // tail
         for (; to >= from; to--) {
             if (value != data[to]) {
@@ -162,16 +162,16 @@ public final class Int16VectorUtils {
      * @return index if element found or -1 otherwise
      */
     public static int lastIndexOf(short[] data, short value, int from, int to) {
-        for (; to > from && from + SPECIES_LENGTH <= to; to -= SPECIES_LENGTH) {
-            var nextVector = ShortVector.fromArray(SPECIES_PREFERRED, data, to - SPECIES_LENGTH);
+        to--;
+
+        for (; to >= from && from + SPECIES_LENGTH < to; to -= SPECIES_LENGTH) {
+            var nextVector = ShortVector.fromArray(SPECIES_PREFERRED, data, to + 1 - SPECIES_LENGTH);
             var valueMask = nextVector.eq(value);
             if (valueMask.anyTrue()) {
-                return to - SPECIES_LENGTH + valueMask.lastTrue();
+                return to + 1 - SPECIES_LENGTH + valueMask.lastTrue();
             }
         }
-        if (to == data.length) {
-            to--;
-        }
+
         // tail
         for (; to >= from; to--) {
             if (value == data[to]) {
