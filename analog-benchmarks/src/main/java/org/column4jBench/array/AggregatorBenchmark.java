@@ -1,4 +1,4 @@
-package org.column4jBench.scalar;
+package org.column4jBench.array;
 
 import org.openjdk.jmh.annotations.*;
 
