@@ -1,9 +1,11 @@
 package org.column4j.utils;
 
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Benchmark for writing/reading data.
@@ -11,8 +13,12 @@ import java.util.Random;
  *
  * @author iv4n-t3a
  */
-@Fork(1)
+@Fork(value = 3)
+@Measurement(iterations = 5, time = 10, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 3, time = 2, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Thread)
+@BenchmarkMode(Mode.Throughput)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class Int64VectorUtilsBenchmark {
     @Param({"16", "128", "1024"})
     public int arraySize;
@@ -22,20 +28,28 @@ public class Int64VectorUtilsBenchmark {
 
     public long[] array;
 
-    @Setup(Level.Iteration)
+    @Setup(Level.Invocation)
     public void setUp() {
         var rand = new Random();
         array = new long[arraySize];
         for (int i = 0; i < arraySize; ++i) {
-            array[i] = rand.nextInt(Integer.MAX_VALUE);
+            array[i] = rand.nextLong();
         }
     }
 
+    @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void agregationColumn4j() {
-        Int64VectorUtils.min(array, Long.MAX_VALUE, 0, arraySize);
-        Int64VectorUtils.max(array, Long.MAX_VALUE, 0, arraySize);
-        Int64VectorUtils.indexOfAnother(array, array[arraySize/2], 0, arraySize);
-        Int64VectorUtils.lastIndexOfAnother(array, array[arraySize/2], 0, arraySize);
+    static public void minByVectorUtils(Blackhole blackhole, Int64VectorUtilsBenchmark benchmark) {
+        blackhole.consume(
+                Int64VectorUtils.min(benchmark.array, Integer.MAX_VALUE, 0, benchmark.arraySize)
+        );
+    }
+
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    static public void indexOfByVectorUtils(Blackhole blackhole, Int64VectorUtilsBenchmark benchmark) {
+        blackhole.consume(
+                Int64VectorUtils.indexOf(benchmark.array, benchmark.array[benchmark.arraySize / 2], 0, benchmark.arraySize)
+        );
     }
 }

@@ -2,10 +2,11 @@ package org.column4j.aggregate;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.column4j.column.impl.mutable.primitive.Int32MutableColumnImpl;
+import org.openjdk.jmh.infra.Blackhole;
 
 /**
  * Benchmark for writing/reading data.
@@ -13,8 +14,12 @@ import org.column4j.column.impl.mutable.primitive.Int32MutableColumnImpl;
  *
  * @author iv4n-t3a
  */
-@Fork(1)
+@Fork(value = 3)
+@Measurement(iterations = 5, time = 10, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 3, time = 2, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Thread)
+@BenchmarkMode(Mode.Throughput)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class Int32AggregatorBenchmark {
     @Param({"16", "128", "1024"})
     public int arraySize;
@@ -24,26 +29,31 @@ public class Int32AggregatorBenchmark {
 
     Random rand = new Random();
 
-    final int defaultValue = 10;
     Int32MutableColumnImpl column;
-    Int32MutableColumnImpl rarecolumn;
 
-    @Setup(Level.Iteration)
+    @Setup(Level.Invocation)
     public void setUp() {
         column = GenerateColumn();
-        rarecolumn = GenerateRareColumn();
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void min() {
-        Int32Aggregator.min(column, 0, arraySize);
+    static public void min(Blackhole blackhole, Int32AggregatorBenchmark benchmark) {
+        blackhole.consume(
+                Int32Aggregator.min(benchmark.column, 0, benchmark.arraySize)
+        );
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void indexOfAnother() {
-        int res = Int32Aggregator.indexOfAnother(rarecolumn, defaultValue, 0, arraySize);
+    static public void indexOf(Blackhole blackhole, Int32AggregatorBenchmark benchmark) {
+        blackhole.consume(
+            Int32Aggregator.indexOfAnother(
+                    benchmark.column,
+                    benchmark.column.get(benchmark.arraySize / 2),
+                    0,
+                    benchmark.arraySize)
+        );
     }
 
     private Int32MutableColumnImpl GenerateColumn() {
@@ -51,15 +61,6 @@ public class Int32AggregatorBenchmark {
         for (int i = 0; i < arraySize; ++i) {
             column.write(i, rand.nextInt());
         }
-        return column;
-    }
-
-    private Int32MutableColumnImpl GenerateRareColumn() {
-        var column = new Int32MutableColumnImpl(columnChunkSize, Integer.MAX_VALUE);
-        for (int i = 0; i < arraySize; ++i) {
-            column.write(i, defaultValue);
-        }
-        column.write(arraySize / 2, defaultValue + 1);
         return column;
     }
 }

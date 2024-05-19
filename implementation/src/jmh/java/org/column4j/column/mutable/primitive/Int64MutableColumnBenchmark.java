@@ -2,11 +2,11 @@ package org.column4j.column.mutable.primitive;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.column4j.column.impl.mutable.primitive.Int64MutableColumnImpl;
-import org.column4j.utils.Int64VectorUtils;
+import org.openjdk.jmh.infra.Blackhole;
 
 /**
  * Benchmark for writing/reading data.
@@ -14,8 +14,12 @@ import org.column4j.utils.Int64VectorUtils;
  *
  * @author iv4n-t3a
  */
-@Fork(1)
+@Fork(value = 3)
+@Measurement(iterations = 5, time = 10, timeUnit = TimeUnit.SECONDS)
+@Warmup(iterations = 3, time = 2, timeUnit = TimeUnit.SECONDS)
 @State(Scope.Thread)
+@BenchmarkMode(Mode.Throughput)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class Int64MutableColumnBenchmark {
     @Param({"16", "128", "1024"})
     public int arraySize;
@@ -24,36 +28,39 @@ public class Int64MutableColumnBenchmark {
     public int columnChunkSize;
 
     public long[] array;
+    Int64MutableColumnImpl column;
 
-    @Setup(Level.Iteration)
+    @Setup(Level.Invocation)
     public void setUp() {
         var rand = new Random();
         array = new long[arraySize];
         for (int i = 0; i < arraySize; ++i) {
-            array[i] = rand.nextInt(Integer.MAX_VALUE);
+            array[i] = rand.nextLong();
+            column.write(i, rand.nextLong());
         }
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void writeColumn4j() {
-        createAndFillColumn();
+    static public void allocColumn4j(Blackhole blackhole, Int64MutableColumnBenchmark benchmark) {
+        blackhole.consume(
+                new Int64MutableColumnImpl(benchmark.arraySize, benchmark.columnChunkSize)
+        );
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    public void writeReadColumn4j() {
-        var column = createAndFillColumn();
-        for (int i = 0; i < arraySize; ++i) {
-            long ignore = column.get(i);
+    static public void writeColumn4j(Int64MutableColumnBenchmark benchmark) {
+        for (int i = 0; i < benchmark.arraySize; i++) {
+            benchmark.column.write(i, benchmark.array[i]);
         }
     }
 
-    private Int64MutableColumnImpl createAndFillColumn() {
-        var column = new Int64MutableColumnImpl(columnChunkSize, Long.MAX_VALUE);
-        for (int i = 0; i < arraySize; ++i) {
-            column.write(i, array[i]);
+    @Benchmark
+    @BenchmarkMode(Mode.Throughput)
+    static public void readColumn4j(Blackhole blackhole, Int64MutableColumnBenchmark benchmark) {
+        for (int i = 0; i < benchmark.arraySize; ++i) {
+            blackhole.consume(benchmark.column.get(i));
         }
-        return column;
     }
 }
