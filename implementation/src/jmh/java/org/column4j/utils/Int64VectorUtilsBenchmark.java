@@ -23,9 +23,6 @@ public class Int64VectorUtilsBenchmark {
     @Param({"16", "128", "1024"})
     public int arraySize;
 
-    @Param({"16", "128", "1024"})
-    public int columnChunkSize;
-
     public long[] array;
 
     @Setup(Level.Invocation)
