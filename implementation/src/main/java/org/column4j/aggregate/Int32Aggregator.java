@@ -27,7 +27,11 @@ public class Int32Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Int32VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Int32VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOfAnother(Int32MutableColumn column, int value, int from, int to) {
@@ -52,7 +56,11 @@ public class Int32Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Int32VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Int32VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int indexOf(Int32MutableColumn column, int value, int from, int to) {
@@ -77,7 +85,11 @@ public class Int32Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Int32VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Int32VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOf(Int32MutableColumn column, int value, int from, int to) {
@@ -102,7 +114,11 @@ public class Int32Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Int32VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Int32VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int min(Int32MutableColumn column, int from, int to) {

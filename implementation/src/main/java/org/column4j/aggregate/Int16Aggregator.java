@@ -27,7 +27,11 @@ public class Int16Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Int16VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Int16VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOfAnother(Int16MutableColumn column, short value, int from, int to) {
@@ -52,7 +56,11 @@ public class Int16Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Int16VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Int16VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int indexOf(Int16MutableColumn column, short value, int from, int to) {
@@ -77,7 +85,11 @@ public class Int16Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Int16VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Int16VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOf(Int16MutableColumn column, short value, int from, int to) {
@@ -102,7 +114,11 @@ public class Int16Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Int16VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Int16VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public short min(Int16MutableColumn column, int from, int to) {

@@ -27,7 +27,11 @@ public class Float64Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Float64VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Float64VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOfAnother(Float64MutableColumn column, double value, int from, int to) {
@@ -38,7 +42,7 @@ public class Float64Aggregator {
             return offset + Float64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
         }
 
-        int res =  Float64VectorUtils.lastIndexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        int res = Float64VectorUtils.lastIndexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
         if (res != -1) {
             return offset + res;
         }
@@ -52,7 +56,11 @@ public class Float64Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Float64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Float64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int indexOf(Float64MutableColumn column, double value, int from, int to) {
@@ -77,7 +85,11 @@ public class Float64Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Float64VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Float64VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOf(Float64MutableColumn column, double value, int from, int to) {
@@ -102,7 +114,11 @@ public class Float64Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Float64VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Float64VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public double min(Float64MutableColumn column, int from, int to) {

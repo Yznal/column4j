@@ -26,7 +26,11 @@ public class StringAggregator {
         }
 
         offset += chunkSize;
-        return offset + StringUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = StringUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOfAnother(StringMutableColumn column, String value, int from, int to) {
@@ -51,7 +55,11 @@ public class StringAggregator {
         }
 
         offset -= chunkSize;
-        return offset + StringUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = StringUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int indexOf(StringMutableColumn column, String value, int from, int to) {
@@ -76,7 +84,11 @@ public class StringAggregator {
         }
 
         offset += chunkSize;
-        return offset + StringUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = StringUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOf(StringMutableColumn column, String value, int from, int to) {
@@ -101,6 +113,10 @@ public class StringAggregator {
         }
 
         offset -= chunkSize;
-        return offset + StringUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = StringUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 }
