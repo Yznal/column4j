@@ -1,4 +1,4 @@
-package org.column4jBench;
+package org.column4jBench.arrow;
 
 import org.openjdk.jmh.annotations.*;
 

@@ -1,0 +1,27 @@
+2024.05.19 17:00:06 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/ivan/Projects/column4j/arrows-benchmarks/.metals/lsp.trace.json or /home/ivan/.cache/metals/lsp.trace.json[0m
+2024.05.19 17:00:07 INFO  logging to file /home/ivan/Projects/column4j/arrows-benchmarks/.metals/metals.log[0m
+2024.05.19 17:00:07 INFO  Started: Metals version 0.11.2 in workspace '/home/ivan/Projects/column4j/arrows-benchmarks' for client coc.nvim 0.0.82.[0m
+2024.05.19 17:00:07 INFO  Parse release: 21.0.3[0m
+2024.05.19 17:00:10 INFO  time: initialize in 2.59s[0m
+2024.05.19 17:00:10 WARN  Build server is not auto-connectable.[0m
+2024.05.19 17:09:57 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/ivan/Projects/column4j/arrows-benchmarks/.metals/lsp.trace.json or /home/ivan/.cache/metals/lsp.trace.json[0m
+2024.05.19 17:09:57 INFO  logging to file /home/ivan/Projects/column4j/arrows-benchmarks/.metals/metals.log[0m
+2024.05.19 17:09:57 INFO  Started: Metals version 0.11.2 in workspace '/home/ivan/Projects/column4j/arrows-benchmarks' for client coc.nvim 0.0.82.[0m
+2024.05.19 17:09:57 INFO  Parse release: 21.0.3[0m
+2024.05.19 17:09:59 INFO  time: initialize in 1.65s[0m
+2024.05.19 17:09:59 WARN  Build server is not auto-connectable.[0m
+2024.05.19 17:10:00 INFO  skipping build import with status 'Requested'[0m
+2024.05.19 18:53:45 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/ivan/Projects/column4j/arrows-benchmarks/.metals/lsp.trace.json or /home/ivan/.cache/metals/lsp.trace.json[0m
+2024.05.19 18:53:46 INFO  logging to file /home/ivan/Projects/column4j/arrows-benchmarks/.metals/metals.log[0m
+2024.05.19 18:53:46 INFO  Started: Metals version 0.11.2 in workspace '/home/ivan/Projects/column4j/arrows-benchmarks' for client coc.nvim 0.0.82.[0m
+2024.05.19 18:53:46 INFO  Parse release: 21.0.3[0m
+2024.05.19 18:53:49 INFO  time: initialize in 3.83s[0m
+2024.05.19 18:53:50 WARN  Build server is not auto-connectable.[0m
+2024.05.19 18:53:50 INFO  skipping build import with status 'Requested'[0m
+2024.05.19 18:55:29 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at /home/ivan/Projects/column4j/arrows-benchmarks/.metals/lsp.trace.json or /home/ivan/.cache/metals/lsp.trace.json[0m
+2024.05.19 18:55:31 INFO  logging to file /home/ivan/Projects/column4j/arrows-benchmarks/.metals/metals.log[0m
+2024.05.19 18:55:31 INFO  Started: Metals version 0.11.2 in workspace '/home/ivan/Projects/column4j/arrows-benchmarks' for client coc.nvim 0.0.82.[0m
+2024.05.19 18:55:31 INFO  Parse release: 21.0.3[0m
+2024.05.19 18:55:34 INFO  time: initialize in 3.35s[0m
+2024.05.19 18:55:34 WARN  Build server is not auto-connectable.[0m
+2024.05.19 18:55:34 INFO  skipping build import with status 'Requested'[0m
