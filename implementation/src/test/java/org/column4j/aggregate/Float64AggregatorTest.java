@@ -46,42 +46,44 @@ class Float64AggregatorTest {
 
     @Test
     void indexOfAnotherTest() {
-        final int testedValues = 25;
         var column = new Float64MutableColumnImpl(maxChunkSize, tombstone);
-        int from = columnSize / 7;
-        int to = 9 * columnSize / 11;
-
-        double defaultValue = random.nextDouble();
-
-        while (defaultValue == tombstone) {
-            defaultValue = random.nextDouble();
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, 2.0);
         }
 
-        for (int i = 0; i < columnSize; ++i) {
-            double value = random.nextDouble(Double.MAX_VALUE);
-            column.write(i, defaultValue);
-            if (random.nextBoolean()) {
-                column.write(i, defaultValue);
-            }
+        assertEquals(0, Float64Aggregator.indexOfAnother(column, 1, 0, columnSize));
+        assertEquals(columnSize - 1, Float64Aggregator.lastIndexOfAnother(column, 1, 0, columnSize));
+        assertEquals(-1, Float64Aggregator.indexOfAnother(column, 2.0, 0, columnSize));
+        assertEquals(-1, Float64Aggregator.lastIndexOfAnother(column, 2.0, 0, columnSize));
+
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, 1);
+        column.write(index2, 1);
+
+        assertEquals(index1, Float64Aggregator.indexOfAnother(column, 2, 0, columnSize));
+        assertEquals(index2, Float64Aggregator.lastIndexOfAnother(column, 2, 0, columnSize));
+    }
+
+    @Test
+    void indexOfTest() {
+        var column = new Float64MutableColumnImpl(maxChunkSize, tombstone);
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, 2);
         }
 
-        int expectedIndexOfAnother = to;
-        int expectedLastIndexOfAnother = from;
+        assertEquals(0, Float64Aggregator.indexOf(column, 2, 0, columnSize));
+        assertEquals(columnSize - 1, Float64Aggregator.lastIndexOf(column, 2, 0, columnSize));
+        assertEquals(-1, Float64Aggregator.indexOf(column, 1, 0, columnSize));
+        assertEquals(-1, Float64Aggregator.lastIndexOf(column, 1, 0, columnSize));
 
-        for (int i = 0; i < testedValues; i++) {
-            int index = random.nextInt(from, to);
-            double value = random.nextDouble();
-            while (value == defaultValue) {
-                value = random.nextDouble();
-            }
-            column.write(index, value);
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, 1);
+        column.write(index2, 1);
 
-            expectedIndexOfAnother = Math.min(expectedIndexOfAnother, index);
-            expectedLastIndexOfAnother = Math.max(expectedLastIndexOfAnother, index);
-        }
-
-        assertEquals(expectedIndexOfAnother, Float64Aggregator.indexOfAnother(column, defaultValue, from, to));
-        assertEquals(expectedLastIndexOfAnother, Float64Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
+        assertEquals(index1, Float64Aggregator.indexOf(column, 1, 0, columnSize));
+        assertEquals(index2, Float64Aggregator.lastIndexOf(column, 1, 0, columnSize));
     }
 
     @Test
