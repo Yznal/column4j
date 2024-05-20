@@ -2,17 +2,14 @@ package org.column4jBench.arrow;
 
 import org.openjdk.jmh.annotations.*;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.IntVector;
 import org.apache.arrow.algorithm.sort.DefaultVectorComparators.IntComparator;
 
 import org.apache.arrow.algorithm.search.VectorSearcher;
-import org.apache.arrow.algorithm.search.ParallelSearcher;
 
 import org.openjdk.jmh.infra.Blackhole;
 
@@ -36,6 +33,7 @@ public class AggregatorBenchmark {
     final IntComparator intcomparator = new IntComparator();
 
     IntVector vector;
+    IntVector vector_to_write_in;
     IntVector keyvector;
 
     @Setup(Level.Invocation)
@@ -43,8 +41,8 @@ public class AggregatorBenchmark {
         if (vector != null) {
             vector.close();
         }
-        vector = GenerateVector();
-        keyvector = CreateKeyVector();
+        vector = generateVector();
+        keyvector = createKeyVector();
     }
 
     @Benchmark
@@ -55,7 +53,7 @@ public class AggregatorBenchmark {
         );
     }
 
-    private IntVector GenerateVector() {
+    private IntVector generateVector() {
         var vector = new IntVector("int vector", alloc);
         vector.allocateNew(arraySize);
         for (int i = 0; i < arraySize; ++i) {
@@ -65,7 +63,14 @@ public class AggregatorBenchmark {
         return vector;
     }
 
-    private IntVector CreateKeyVector() {
+    private IntVector createEmptyVector() {
+        var vector = new IntVector("int vector", alloc);
+        vector.allocateNew(arraySize);
+        vector.setValueCount(arraySize);
+        return vector;
+    }
+
+    private IntVector createKeyVector() {
         var vector = new IntVector("int vector", alloc);
         vector.allocateNew(1);
         vector.set(1, this.vector.get(arraySize / 2));
