@@ -55,14 +55,6 @@ public class AggregatorBenchmark {
         );
     }
 
-    @Benchmark
-    @BenchmarkMode(Mode.Throughput)
-    static public void liniarSearchFieldsInitialization(Blackhole blackhole, AggregatorBenchmark benchmark) {
-        blackhole.consume(
-            VectorSearcher.linearSearch(benchmark.vector, new IntComparator(), benchmark.CreateKeyVector(), 0)
-        );
-    }
-
     private IntVector GenerateVector() {
         var vector = new IntVector("int vector", alloc);
         vector.allocateNew(arraySize);

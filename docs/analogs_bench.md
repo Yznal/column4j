@@ -18,9 +18,6 @@ column4jBench.array.AggregatorBenchmark.min                                     
 column4jBench.arrow.AggregatorBenchmark.linearSearch                               16        N/A  thrpt   15   9355.019 ±  282.359  ops/ms
 column4jBench.arrow.AggregatorBenchmark.linearSearch                              128        N/A  thrpt   15   2117.588 ±   52.077  ops/ms
 column4jBench.arrow.AggregatorBenchmark.linearSearch                             1024        N/A  thrpt   15    296.375 ±    1.501  ops/ms
-column4jBench.arrow.AggregatorBenchmark.liniarSearchFieldsInitialization           16        N/A  thrpt   15   2290.341 ±   14.219  ops/ms
-column4jBench.arrow.AggregatorBenchmark.liniarSearchFieldsInitialization          128        N/A  thrpt   15   1281.050 ±   14.439  ops/ms
-column4jBench.arrow.AggregatorBenchmark.liniarSearchFieldsInitialization         1024        N/A  thrpt   15    282.538 ±    1.451  ops/ms
 column4jBench.arrow.AggregatorBenchmark.paralelSearch                              16          1  thrpt   15    159.556 ±    2.598  ops/ms
 column4jBench.arrow.AggregatorBenchmark.paralelSearch                              16          2  thrpt   15    131.918 ±    1.848  ops/ms
 column4jBench.arrow.AggregatorBenchmark.paralelSearch                              16          4  thrpt   15    141.628 ±   11.268  ops/ms
