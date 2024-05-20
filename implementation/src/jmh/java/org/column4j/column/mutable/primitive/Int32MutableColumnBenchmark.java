@@ -27,8 +27,11 @@ public class Int32MutableColumnBenchmark {
     @Param({"16", "128", "1024"})
     public int columnChunkSize;
 
+    final int maxChunkSize = 23;
+    final int thombstone = 1234567;
+
     public int[] array;
-    Int32MutableColumnImpl column;
+    Int32MutableColumnImpl column = new Int32MutableColumnImpl(maxChunkSize, thombstone);
 
     @Setup(Level.Invocation)
     public void setUp() {
