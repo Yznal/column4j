@@ -50,4 +50,43 @@ public final class StringUtils {
         }
         return -1;
     }
+
+    /**
+     * Find index of first element what equals to passed value
+     *
+     * @param data  source String array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int indexOf(String[] data, String value, int from, int to) {
+        for (; from < to; from++) {
+            if (Objects.equals(value, data[from])) {
+                return from;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find index of last element what equals to passed value
+     *
+     * @param data  source String array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int lastIndexOf(String[] data, String value, int from, int to) {
+        if (to == data.length) {
+            to--;
+        }
+        for (; to >= from; to--) {
+            if (Objects.equals(value, data[to])) {
+                return to;
+            }
+        }
+        return -1;
+    }
 }

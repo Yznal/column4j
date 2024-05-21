@@ -27,7 +27,11 @@ public class Int64Aggregator {
         }
 
         offset += chunkSize;
-        return offset + Int64VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        res = Int64VectorUtils.indexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public int lastIndexOfAnother(Int64MutableColumn column, long value, int from, int to) {
@@ -35,7 +39,7 @@ public class Int64Aggregator {
         int offset = to - to % chunkSize;
 
         if (from / chunkSize == (to - 1) / chunkSize) {
-            return offset + Int64VectorUtils.indexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
+            return offset + Int64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
         }
 
         int res =  Int64VectorUtils.lastIndexOfAnother(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
@@ -52,7 +56,69 @@ public class Int64Aggregator {
         }
 
         offset -= chunkSize;
-        return offset + Int64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        res = Int64VectorUtils.lastIndexOfAnother(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
+    }
+
+    static public int indexOf(Int64MutableColumn column, long value, int from, int to) {
+        final int chunkSize = column.chunkSize();
+        int offset = from - from % chunkSize;
+
+        if (from / chunkSize == (to - 1) / chunkSize) {
+            return offset + Int64VectorUtils.indexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
+        }
+
+        int res = Int64VectorUtils.indexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+
+        for (int i = from / chunkSize + 1; i < (to - 1) / chunkSize; i++) {
+            offset += chunkSize;
+            res = Int64VectorUtils.indexOf(column.getChunk(i).getData(), value, 0, column.chunkSize());
+            if (res != -1) {
+                return offset + res;
+            }
+        }
+
+        offset += chunkSize;
+        res = Int64VectorUtils.indexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
+    }
+
+    static public int lastIndexOf(Int64MutableColumn column, long value, int from, int to) {
+        final int chunkSize = column.chunkSize();
+        int offset = to - to % chunkSize;
+
+        if (from / chunkSize == (to - 1) / chunkSize) {
+            return offset + Int64VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, (to - 1) % chunkSize + 1);
+        }
+
+        int res =  Int64VectorUtils.lastIndexOf(column.getChunk((to - 1) / chunkSize).getData(), value, 0, (to - 1) % chunkSize + 1);
+        if (res != -1) {
+            return offset + res;
+        }
+
+        for (int i = (to - 1) / chunkSize - 1; i > from / chunkSize; i--) {
+            offset -= chunkSize;
+            res = Int64VectorUtils.lastIndexOf(column.getChunk(i).getData(), value, 0, column.chunkSize());
+            if (res != -1) {
+                return offset + res;
+            }
+        }
+
+        offset -= chunkSize;
+        res = Int64VectorUtils.lastIndexOf(column.getChunk(from / chunkSize).getData(), value, from % chunkSize, column.chunkSize());
+        if (res != -1) {
+            return offset + res;
+        }
+        return -1;
     }
 
     static public long min(Int64MutableColumn column, int from, int to) {

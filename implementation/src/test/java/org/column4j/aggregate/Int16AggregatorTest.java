@@ -46,46 +46,44 @@ class Int16AggregatorTest {
 
     @Test
     void indexOfAnotherTest() {
-        final int testedValues = 25;
         var column = new Int16MutableColumnImpl(maxChunkSize, tombstone);
-        int from = columnSize / 7;
-        int to = 9 * columnSize / 11;
-
-        short defaultValue = (short)random.nextInt();
-
-        while (defaultValue == tombstone) {
-            defaultValue = (short)random.nextInt();
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, (short)2);
         }
 
-        for (int i = 0; i < columnSize; ++i) {
-            short value = (short)random.nextInt();
-            column.write(i, defaultValue);
-            if (random.nextBoolean()) {
-                column.write(i, defaultValue);
-            }
-        }
+        assertEquals(0, Int16Aggregator.indexOfAnother(column, (short)1, 0, columnSize));
+        assertEquals(columnSize - 1, Int16Aggregator.lastIndexOfAnother(column, (short)1, 0, columnSize));
+        assertEquals(-1, Int16Aggregator.indexOfAnother(column, (short)2, 0, columnSize));
+        assertEquals(-1, Int16Aggregator.lastIndexOfAnother(column, (short)2, 0, columnSize));
 
-        int expectedIndexOfAnother = to;
-        int expectedLastIndexOfAnother = from;
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, (short)1);
+        column.write(index2, (short)1);
 
-        for (int i = 0; i < testedValues; i++) {
-            int index = random.nextInt(from, to);
-            short value = (short)random.nextInt();
-            while (value == defaultValue) {
-                value = (short)random.nextInt();
-            }
-            column.write(index, value);
-
-            expectedIndexOfAnother = Math.min(expectedIndexOfAnother, index);
-            expectedLastIndexOfAnother = Math.max(expectedLastIndexOfAnother, index);
-        }
-
-        assertEquals(expectedIndexOfAnother, Int16Aggregator.indexOfAnother(column, defaultValue, from, to));
-        assertEquals(expectedLastIndexOfAnother, Int16Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
+        assertEquals(index1, Int16Aggregator.indexOfAnother(column, (short)2, 0, columnSize));
+        assertEquals(index2, Int16Aggregator.lastIndexOfAnother(column, (short)2, 0, columnSize));
     }
 
     @Test
-    void sumTest() {
+    void indexOfTest() {
+        var column = new Int16MutableColumnImpl(maxChunkSize, tombstone);
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, (short)2);
+        }
+
+        assertEquals(0, Int16Aggregator.indexOf(column, (short)2, 0, columnSize));
+        assertEquals(columnSize - 1, Int16Aggregator.lastIndexOf(column, (short)2, 0, columnSize));
+        assertEquals(-1, Int16Aggregator.indexOf(column, (short)1, 0, columnSize));
+        assertEquals(-1, Int16Aggregator.lastIndexOf(column, (short)1, 0, columnSize));
+
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, (short)1);
+        column.write(index2, (short)1);
+
+        assertEquals(index1, Int16Aggregator.indexOf(column, (short)1, 0, columnSize));
+        assertEquals(index2, Int16Aggregator.lastIndexOf(column, (short)1, 0, columnSize));
     }
 
     @Test

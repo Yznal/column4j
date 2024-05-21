@@ -103,9 +103,64 @@ public final class Int64VectorUtils {
      * @return index if element found or -1 otherwise
      */
     public static int lastIndexOfAnother(long[] data, long value, int from, int to) {
+        to--;
+
+        for (; to >= from && from + SPECIES_LENGTH < to; to -= SPECIES_LENGTH) {
+            var nextVector = LongVector.fromArray(SPECIES_PREFERRED, data, to + 1 - SPECIES_LENGTH);
+            var valueMask = nextVector.eq(value).not();
+            if (valueMask.anyTrue()) {
+                return to + 1 - SPECIES_LENGTH + valueMask.lastTrue();
+            }
+        }
+
+        // tail
+        for (; to >= from; to--) {
+            if (value != data[to]) {
+                return to;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find index of first element what equals to passed value
+     *
+     * @param data  source long array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int indexOf(long[] data, long value, int from, int to) {
+        for (; from < to && from + SPECIES_LENGTH <= to; from += SPECIES_LENGTH) {
+            var nextVector = LongVector.fromArray(SPECIES_PREFERRED, data, from);
+            var valueMask = nextVector.eq(value);
+            if (valueMask.anyTrue()) {
+                return from + valueMask.firstTrue();
+            }
+        }
+        // tail
+        for (; from < to; from++) {
+            if (value == data[from]) {
+                return from;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find index of last element what equals to passed value
+     *
+     * @param data  source long array
+     * @param value value for filter
+     * @param from  left bound (inclusive)
+     * @param to    right bound (exclusive)
+     * @return index if element found or -1 otherwise
+     */
+    public static int lastIndexOf(long[] data, long value, int from, int to) {
         for (; to > from && from + SPECIES_LENGTH <= to; to -= SPECIES_LENGTH) {
             var nextVector = LongVector.fromArray(SPECIES_PREFERRED, data, to - SPECIES_LENGTH);
-            var valueMask = nextVector.eq(value).not();
+            var valueMask = nextVector.eq(value);
             if (valueMask.anyTrue()) {
                 return to - SPECIES_LENGTH + valueMask.lastTrue();
             }
@@ -115,7 +170,7 @@ public final class Int64VectorUtils {
         }
         // tail
         for (; to >= from; to--) {
-            if (value != data[to]) {
+            if (value == data[to]) {
                 return to;
             }
         }

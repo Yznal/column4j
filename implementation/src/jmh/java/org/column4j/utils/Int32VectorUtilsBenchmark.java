@@ -19,34 +19,34 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Thread)
 @BenchmarkMode(Mode.Throughput)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class Int64VectorUtilsBenchmark {
+public class Int32VectorUtilsBenchmark {
     @Param({"16", "128", "1024"})
     public int arraySize;
 
-    public long[] array;
+    public int[] array;
 
     @Setup(Level.Invocation)
     public void setUp() {
         var rand = new Random();
-        array = new long[arraySize];
+        array = new int[arraySize];
         for (int i = 0; i < arraySize; ++i) {
-            array[i] = rand.nextLong();
+            array[i] = rand.nextInt();
         }
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    static public void minByVectorUtils(Blackhole blackhole, Int64VectorUtilsBenchmark benchmark) {
+    static public void minByVectorUtils(Blackhole blackhole, Int32VectorUtilsBenchmark benchmark) {
         blackhole.consume(
-                Int64VectorUtils.min(benchmark.array, Integer.MAX_VALUE, 0, benchmark.arraySize)
+            Int32VectorUtils.min(benchmark.array, Integer.MAX_VALUE, 0, benchmark.arraySize)
         );
     }
 
     @Benchmark
     @BenchmarkMode(Mode.Throughput)
-    static public void indexOfByVectorUtils(Blackhole blackhole, Int64VectorUtilsBenchmark benchmark) {
+    static public void indexOfByVectorUtils(Blackhole blackhole, Int32VectorUtilsBenchmark benchmark) {
         blackhole.consume(
-                Int64VectorUtils.indexOf(benchmark.array, benchmark.array[benchmark.arraySize / 2], 0, benchmark.arraySize)
+            Int32VectorUtils.indexOf(benchmark.array, benchmark.array[benchmark.arraySize / 2], 0, benchmark.arraySize)
         );
     }
 }

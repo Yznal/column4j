@@ -46,42 +46,44 @@ class Int32AggregatorTest {
 
     @Test
     void indexOfAnotherTest() {
-        final int testedValues = 25;
         var column = new Int32MutableColumnImpl(maxChunkSize, tombstone);
-        int from = columnSize / 7;
-        int to = 9 * columnSize / 11;
-
-        int defaultValue = random.nextInt();
-
-        while (defaultValue == tombstone) {
-            defaultValue = random.nextInt();
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, 2);
         }
 
-        for (int i = 0; i < columnSize; ++i) {
-            int value = random.nextInt();
-            column.write(i, defaultValue);
-            if (random.nextBoolean()) {
-                column.write(i, defaultValue);
-            }
+        assertEquals(0, Int32Aggregator.indexOfAnother(column, 1, 0, columnSize));
+        assertEquals(columnSize - 1, Int32Aggregator.lastIndexOfAnother(column, 1, 0, columnSize));
+        assertEquals(-1, Int32Aggregator.indexOfAnother(column, 2, 0, columnSize));
+        assertEquals(-1, Int32Aggregator.lastIndexOfAnother(column, 2, 0, columnSize));
+
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, 1);
+        column.write(index2, 1);
+
+        assertEquals(index1, Int32Aggregator.indexOfAnother(column, 2, 0, columnSize));
+        assertEquals(index2, Int32Aggregator.lastIndexOfAnother(column, 2, 0, columnSize));
+    }
+
+    @Test
+    void indexOfTest() {
+        var column = new Int32MutableColumnImpl(maxChunkSize, tombstone);
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, 2);
         }
 
-        int expectedIndexOfAnother = to;
-        int expectedLastIndexOfAnother = from;
+        assertEquals(0, Int32Aggregator.indexOf(column, 2, 0, columnSize));
+        assertEquals(columnSize - 1, Int32Aggregator.lastIndexOf(column, 2, 0, columnSize));
+        assertEquals(-1, Int32Aggregator.indexOf(column, 1, 0, columnSize));
+        assertEquals(-1, Int32Aggregator.lastIndexOf(column, 1, 0, columnSize));
 
-        for (int i = 0; i < testedValues; i++) {
-            int index = random.nextInt(from, to);
-            int value = random.nextInt();
-            while (value == defaultValue) {
-                value = random.nextInt();
-            }
-            column.write(index, value);
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, 1);
+        column.write(index2, 1);
 
-            expectedIndexOfAnother = Math.min(expectedIndexOfAnother, index);
-            expectedLastIndexOfAnother = Math.max(expectedLastIndexOfAnother, index);
-        }
-
-        assertEquals(expectedIndexOfAnother, Int32Aggregator.indexOfAnother(column, defaultValue, from, to));
-        assertEquals(expectedLastIndexOfAnother, Int32Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
+        assertEquals(index1, Int32Aggregator.indexOf(column, 1, 0, columnSize));
+        assertEquals(index2, Int32Aggregator.lastIndexOf(column, 1, 0, columnSize));
     }
 
     @Test

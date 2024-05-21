@@ -46,46 +46,44 @@ class Int8AggregatorTest {
 
     @Test
     void indexOfAnotherTest() {
-        final int testedValues = 25;
         var column = new Int8MutableColumnImpl(maxChunkSize, tombstone);
-        int from = columnSize / 7;
-        int to = 9 * columnSize / 11;
-
-        byte defaultValue = (byte)random.nextInt();
-
-        while (defaultValue == tombstone) {
-            defaultValue = (byte)random.nextInt();
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, (byte)2);
         }
 
-        for (int i = 0; i < columnSize; ++i) {
-            byte value = (byte)random.nextInt();
-            column.write(i, defaultValue);
-            if (random.nextBoolean()) {
-                column.write(i, defaultValue);
-            }
-        }
+        assertEquals(0, Int8Aggregator.indexOfAnother(column, (byte)1, 0, columnSize));
+        assertEquals(columnSize - 1, Int8Aggregator.lastIndexOfAnother(column, (byte)1, 0, columnSize));
+        assertEquals(-1, Int8Aggregator.indexOfAnother(column, (byte)2, 0, columnSize));
+        assertEquals(-1, Int8Aggregator.lastIndexOfAnother(column, (byte)2, 0, columnSize));
 
-        int expectedIndexOfAnother = to;
-        int expectedLastIndexOfAnother = from;
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, (byte)1);
+        column.write(index2, (byte)1);
 
-        for (int i = 0; i < testedValues; i++) {
-            int index = random.nextInt(from, to);
-            byte value = (byte)random.nextInt();
-            while (value == defaultValue) {
-                value = (byte)random.nextInt();
-            }
-            column.write(index, value);
-
-            expectedIndexOfAnother = Math.min(expectedIndexOfAnother, index);
-            expectedLastIndexOfAnother = Math.max(expectedLastIndexOfAnother, index);
-        }
-
-        assertEquals(expectedIndexOfAnother, Int8Aggregator.indexOfAnother(column, defaultValue, from, to));
-        assertEquals(expectedLastIndexOfAnother, Int8Aggregator.lastIndexOfAnother(column, defaultValue, from, to));
+        assertEquals(index1, Int8Aggregator.indexOfAnother(column, (byte)2, 0, columnSize));
+        assertEquals(index2, Int8Aggregator.lastIndexOfAnother(column, (byte)2, 0, columnSize));
     }
 
     @Test
-    void sumTest() {
+    void indexOfTest() {
+        var column = new Int8MutableColumnImpl(maxChunkSize, tombstone);
+        for (int i = 0; i < columnSize; i++) {
+            column.write(i, (byte)2);
+        }
+
+        assertEquals(0, Int8Aggregator.indexOf(column, (byte)2, 0, columnSize));
+        assertEquals(columnSize - 1, Int8Aggregator.lastIndexOf(column, (byte)2, 0, columnSize));
+        assertEquals(-1, Int8Aggregator.indexOf(column, (byte)1, 0, columnSize));
+        assertEquals(-1, Int8Aggregator.lastIndexOf(column, (byte)1, 0, columnSize));
+
+        int index1 = columnSize / 4;
+        int index2 = 3 * columnSize / 4;
+        column.write(index1, (byte)1);
+        column.write(index2, (byte)1);
+
+        assertEquals(index1, Int8Aggregator.indexOf(column, (byte)1, 0, columnSize));
+        assertEquals(index2, Int8Aggregator.lastIndexOf(column, (byte)1, 0, columnSize));
     }
 
     @Test
